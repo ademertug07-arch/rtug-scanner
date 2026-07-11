@@ -1,0 +1,302 @@
+//@version=5
+indicator("RTUG BREAKOUT ALERT", shorttitle="RTUG BO", overlay=false)
+
+// ═══════════════════════════════════════════════════════════
+// 🎨 RENK SABİTLERİ
+// ═══════════════════════════════════════════════════════════
+dynC(v, u, d) => v > v[1] ? u : d
+dynCA(v, u, d, t) => v > v[1] ? color.new(u, t) : color.new(d, t)
+
+// ═══════════════════════════════════════════════════════════
+// ⚙️ GİRDİLER
+// ═══════════════════════════════════════════════════════════
+
+// --- Panel ---
+bandGap     = input.float(300, "Bant Merkez Aralığı", group="⚙ Panel")
+obvNormLen  = input.int(200, "Normalize Periyodu", group="⚙ Panel")
+main_period = input.int(20, "Main Period", group="⚙ Panel")
+
+// --- Divergence Periods ---
+// Div1 (En yavaş — trend)
+lf1 = input.int(100, "Fast #1", group="📊 Div 1")
+ls1 = input.int(20,  "Slow #1", group="📊 Div 1")
+// Div2
+lf2 = input.int(70,  "Fast #2", group="📊 Div 2")
+ls2 = input.int(15,  "Slow #2", group="📊 Div 2")
+// Div3
+lf3 = input.int(50,  "Fast #3", group="📊 Div 3")
+ls3 = input.int(20,  "Slow #3", group="📊 Div 3")
+// Div5 (Hızlı)
+lf5 = input.int(15,  "Fast #5", group="📊 Div 5")
+ls5 = input.int(5,   "Slow #5", group="📊 Div 5")
+// Div6 (En hızlı)
+lf6 = input.int(8,   "Fast #6", group="📊 Div 6")
+ls6 = input.int(3,   "Slow #6", group="📊 Div 6")
+
+// --- Reverse Periods ---
+lr1f = input.int(20,  "Fast Rev #1", group="🔄 Rev Div 1")
+lr1s = input.int(100, "Slow Rev #1", group="🔄 Rev Div 1")
+lr2f = input.int(15,  "Fast Rev #2", group="🔄 Rev Div 2")
+lr2s = input.int(70,  "Slow Rev #2", group="🔄 Rev Div 2")
+lr3f = input.int(20,  "Fast Rev #3", group="🔄 Rev Div 3")
+lr3s = input.int(50,  "Slow Rev #3", group="🔄 Rev Div 3")
+lr5f = input.int(5,   "Fast Rev #5", group="🔄 Rev Div 5")
+lr5s = input.int(15,  "Slow Rev #5", group="🔄 Rev Div 5")
+lr6f = input.int(3,   "Fast Rev #6", group="🔄 Rev Div 6")
+lr6s = input.int(8,   "Slow Rev #6", group="🔄 Rev Div 6")
+
+// --- Breakout Eşikleri ---
+bo_threshold = input.int(4, "Min Div Count for Breakout", group="🚨 Breakout", minval=2, maxval=6)
+bo_bars      = input.int(3, "Confirmation Bars", group="🚨 Breakout", minval=1, maxval=10)
+
+// --- Renkler ---
+c_up    = input.color(color.rgb(0, 255, 120), "Bullish", group="🎨 Colors")
+c_down  = input.color(color.rgb(255, 60, 60), "Bearish", group="🎨 Colors")
+c_bg    = input.color(color.rgb(5, 5, 12),    "BG",      group="🎨 Colors")
+
+// ═══════════════════════════════════════════════════════════
+// 🔄 HESAPLAMALAR
+// ═══════════════════════════════════════════════════════════
+
+// --- OBV Hesaplama ---
+ch = ta.change(close)
+obv_raw = ta.cum(ch > 0 ? volume : ch < 0 ? -volume : 0)
+obv_norm = (obv_raw - ta.lowest(obv_raw, main_period)) / (ta.highest(obv_raw, main_period) - ta.lowest(obv_raw, main_period) + 1e-9) * 2 - 1
+
+// --- Divergence Hesaplama ---
+f_div(_src, _fast, _slow) =>
+    _obv = ta.cum(ta.change(_src) > 0 ? volume : ta.change(_src) < 0 ? -volume : 0)
+    ta.rma(_obv, _fast) - ta.rma(_obv, _slow)
+
+div1  = f_div(close, lf1, ls1)
+div2  = f_div(close, lf2, ls2)
+div3  = f_div(close, lf3, ls3)
+div5  = f_div(close, lf5, ls5)
+div6  = f_div(close, lf6, ls6)
+
+// --- Reverse Divergence ---
+f_rev(_obv_src, _ff, _sf) =>
+    _obv2 = ta.cum(ta.change(_obv_src) > 0 ? volume : ta.change(_obv_src) < 0 ? -volume : 0)
+    ta.rma(_obv2, _ff) - ta.rma(_obv2, _sf)
+
+// Reverse div'ler için obv kaynaklarını yeniden hesapla
+f_obv_src(_src) =>
+    ta.cum(ta.change(_src) > 0 ? volume : ta.change(_src) < 0 ? -volume : 0)
+
+o1 = f_obv_src(close)
+o2 = f_obv_src(close)
+o3 = f_obv_src(close)
+o5 = f_obv_src(close)
+o6 = f_obv_src(close)
+
+div1r = f_rev(na, 0, 0)  // placeholder, real calc below
+div1r := ta.rma(o1, lr1f) - ta.rma(o1, lr1s)
+div2r := ta.rma(o2, lr2f) - ta.rma(o2, lr2s)
+div3r := ta.rma(o3, lr3f) - ta.rma(o3, lr3s)
+div5r := ta.rma(o5, lr5f) - ta.rma(o5, lr5s)
+div6r := ta.rma(o6, lr6f) - ta.rma(o6, lr6s)
+
+// --- Normalize Display ---
+f_norm(_val, _len) =>
+    _hi = ta.highest(_val, _len)
+    _lo = ta.lowest(_val, _len)
+    (_val - _lo) / (_hi - _lo + 1e-9) * 200 - 100
+
+// ═══════════════════════════════════════════════════════════
+// 📊 WEBHOOK İÇİN ÖZEL PLOTLAR (görünmez, sadece webhook verisi)
+// ═══════════════════════════════════════════════════════════
+plot(bull_count, "bull_count", color=color.new(color.white, 100), display=display.none)
+plot(bear_count, "bear_count", color=color.new(color.white, 100), display=display.none)
+plot(div1 > 0 ? 1 : 0, "d1", color=color.new(color.white, 100), display=display.none)
+plot(div2 > 0 ? 1 : 0, "d2", color=color.new(color.white, 100), display=display.none)
+plot(div3 > 0 ? 1 : 0, "d3", color=color.new(color.white, 100), display=display.none)
+plot(div5 > 0 ? 1 : 0, "d5", color=color.new(color.white, 100), display=display.none)
+plot(div6 > 0 ? 1 : 0, "d6", color=color.new(color.white, 100), display=display.none)
+
+// ═══════════════════════════════════════════════════════════
+// 🚨 BREAKOUT MANTIĞI
+// ═══════════════════════════════════════════════════════════
+
+// --- Divergence yön tespiti ---
+div1_bull = div1 > 0 and div1 > div1[1]
+div1_bear = div1 < 0 and div1 < div1[1]
+div2_bull = div2 > 0 and div2 > div2[1]
+div2_bear = div2 < 0 and div2 < div2[1]
+div3_bull = div3 > 0 and div3 > div3[1]
+div3_bear = div3 < 0 and div3 < div3[1]
+div5_bull = div5 > 0 and div5 > div5[1]
+div5_bear = div5 < 0 and div5 < div5[1]
+div6_bull = div6 > 0 and div6 > div6[1]
+div6_bear = div6 < 0 and div6 < div6[1]
+
+// --- Divergence pozisyon (sadece pozitif/negatif) ---
+d1_pos = div1 > 0 ? 1 : 0
+d2_pos = div2 > 0 ? 1 : 0
+d3_pos = div3 > 0 ? 1 : 0
+d5_pos = div5 > 0 ? 1 : 0
+d6_pos = div6 > 0 ? 1 : 0
+
+d1_neg = div1 < 0 ? 1 : 0
+d2_neg = div2 < 0 ? 1 : 0
+d3_neg = div3 < 0 ? 1 : 0
+d5_neg = div5 < 0 ? 1 : 0
+d6_neg = div6 < 0 ? 1 : 0
+
+// --- Toplam bullish/bearish divergence sayısı ---
+bull_count = d1_pos + d2_pos + d3_pos + d5_pos + d6_pos
+bear_count = d1_neg + d2_neg + d3_neg + d5_neg + d6_neg
+
+// --- OBV Momentum ---
+obv_bull = obv_norm > obv_norm[1]
+obv_strong = obv_norm > 0.3
+
+// --- Breakout / Breakdown sinyalleri ---
+is_bullish_breakout  = bull_count >= bo_threshold and obv_bull
+is_bearish_breakout  = bear_count >= bo_threshold and not obv_bull
+is_super_bullish     = bull_count == 5 and obv_strong
+is_super_bearish     = bear_count == 5 and not obv_strong
+
+// --- Cross sinyalleri (en hızlı div) ---
+div6_cross_up = ta.crossover(div6, 0)
+div6_cross_dn = ta.crossunder(div6, 0)
+
+// --- Momentum değişimi ---
+prev_bull = bull_count[1]
+prev_bear = bear_count[1]
+momentum_bull = bull_count > prev_bull and bull_count >= 3
+momentum_bear = bear_count > prev_bear and bear_count >= 3
+
+// --- Breakout tipi ---
+bo_type() =>
+    if is_super_bullish
+        "SUPER BULLISH 🚀"
+    else if is_bullish_breakout
+        "BULLISH 📈"
+    else if is_super_bearish
+        "SUPER BEARISH 🔻"
+    else if is_bearish_breakout
+        "BEARISH 📉"
+    else
+        ""
+
+bo_signal = bo_type()
+
+// --- Cross tipi ---
+cross_type() =>
+    if div6_cross_up
+        "DIV6 CROSS UP ⚡"
+    else if div6_cross_dn
+        "DIV6 CROSS DOWN ⚡"
+    else
+        ""
+
+cross_signal = cross_type()
+
+// ═══════════════════════════════════════════════════════════
+// 🔔 ALERT CONDITIONS
+// ═══════════════════════════════════════════════════════════
+
+// WEBHOOK için JSON formatlı mesaj template
+tv_json_msg() =>
+    "{\"ticker\":\"{{ticker}}\",\"close\":\"{{close}}\",\"time\":\"{{time}}\",\"exchange\":\"{{exchange}}\",\"bull_count\":{{plot(\"bull_count\")}},\"bear_count\":{{plot(\"bear_count\")}},\"d1\":{{plot(\"d1\")}},\"d2\":{{plot(\"d2\")}},\"d3\":{{plot(\"d3\")}},\"d5\":{{plot(\"d5\")}},\"d6\":{{plot(\"d6\")}},\"type\":\""
+
+// Bullish Breakout
+alertcondition(is_bullish_breakout, 
+     title="RTUG Bullish Breakout", 
+     message=tv_json_msg() + "BULLISH_BREAKOUT\"}")
+
+// Bearish Breakout
+alertcondition(is_bearish_breakout, 
+     title="RTUG Bearish Breakout", 
+     message=tv_json_msg() + "BEARISH_BREAKOUT\"}")
+
+// Super Bullish
+alertcondition(is_super_bullish, 
+     title="RTUG Super Bullish", 
+     message=tv_json_msg() + "SUPER_BULLISH\"}")
+
+// Super Bearish
+alertcondition(is_super_bearish, 
+     title="RTUG Super Bearish", 
+     message=tv_json_msg() + "SUPER_BEARISH\"}")
+
+// Div6 Cross
+alertcondition(div6_cross_up, 
+     title="RTUG Fast Div Cross Up", 
+     message=tv_json_msg() + "DIV6_CROSS_UP\"}")
+
+alertcondition(div6_cross_dn, 
+     title="RTUG Fast Div Cross Down", 
+     message=tv_json_msg() + "DIV6_CROSS_DOWN\"}")
+
+// Momentum Shift
+alertcondition(momentum_bull, 
+     title="RTUG Momentum Bullish", 
+     message=tv_json_msg() + "MOMENTUM_BULL\"}")
+
+alertcondition(momentum_bear, 
+     title="RTUG Momentum Bearish", 
+     message=tv_json_msg() + "MOMENTUM_BEAR\"}")
+
+// ═══════════════════════════════════════════════════════════
+// 📊 GÖSTERGE ÇİZİMLERİ
+// ═══════════════════════════════════════════════════════════
+
+offsetA = bandGap
+offsetB = 0.0
+offsetC = -bandGap
+
+hline(offsetA, "Band A", color=color.new(color.gray, 70))
+hline(offsetB, "Band B", color=color.new(color.gray, 70))
+hline(offsetC, "Band C", color=color.new(color.gray, 70))
+
+// --- Bant A: Forward Divergences ---
+plot(f_norm(div1, obvNormLen) + offsetA, "Div1", dynC(div1, color.rgb(255,45,200), color.rgb(255,100,220)), 2)
+plot(f_norm(div2, obvNormLen) + offsetA, "Div2", dynC(div2, color.rgb(180,60,255), color.rgb(220,120,255)), 2)
+plot(f_norm(div3, obvNormLen) + offsetA, "Div3", dynC(div3, color.rgb(60,255,130), color.rgb(180,255,0)), 2)
+plot(f_norm(div5, obvNormLen) + offsetA, "Div5", dynC(div5, color.rgb(255,45,85), color.rgb(255,120,0)), 3)
+plot(f_norm(div6, obvNormLen) + offsetA, "Div6", dynC(div6, color.rgb(0,170,255), color.rgb(0,255,240)), 3)
+
+// --- Bant B: Reverse Divergences ---
+plot(f_norm(div1r, obvNormLen) + offsetB, "R1", dynC(div1r, color.rgb(255,45,200), color.rgb(255,100,220)), 1, plot.style_circles)
+plot(f_norm(div2r, obvNormLen) + offsetB, "R2", dynC(div2r, color.rgb(180,60,255), color.rgb(220,120,255)), 1, plot.style_circles)
+plot(f_norm(div3r, obvNormLen) + offsetB, "R3", dynC(div3r, color.rgb(60,255,130), color.rgb(180,255,0)), 1, plot.style_circles)
+plot(f_norm(div5r, obvNormLen) + offsetB, "R5", dynC(div5r, color.rgb(255,45,85), color.rgb(255,120,0)), 1, plot.style_circles)
+plot(f_norm(div6r, obvNormLen) + offsetB, "R6", dynC(div6r, color.rgb(0,170,255), color.rgb(0,255,240)), 1, plot.style_circles)
+
+// --- Bant C: OBV Ana + Breakout Sinyalleri ---
+plot(obv_norm * 100 + offsetC, "OBV", dynC(obv_norm, color.rgb(255,225,40), color.rgb(50,245,255)), 3)
+
+// Breakout sinyal işaretçileri
+plotshape(is_bullish_breakout ? offsetC - 30 : na, "BUY", style=shape.triangleup, location=location.absolute, color=color.new(#00ff88, 50), size=size.small)
+plotshape(is_bearish_breakout ? offsetC - 30 : na, "SELL", style=shape.triangledown, location=location.absolute, color=color.new(#ff4455, 50), size=size.small)
+plotshape(is_super_bullish ? offsetC - 50 : na, "SUPER↑", style=shape.diamond, location=location.absolute, color=color.new(#00ff88, 30), size=size.tiny)
+plotshape(is_super_bearish ? offsetC - 50 : na, "SUPER↓", style=shape.diamond, location=location.absolute, color=color.new(#ff4455, 30), size=size.tiny)
+
+// --- Breakout Bilgi Paneli (sadece son barda) ---
+var table info = table.new(position.top_right, 2, 8, bgcolor=color.new(#0a0a1a, 85), border_color=#333355)
+if barstate.islast
+    bo_clr = is_bullish_breakout ? #00ff88 : is_bearish_breakout ? #ff4455 : #888899
+    table.cell(info, 0, 0, "RTUG BO", text_color=#ffffff, text_size=size.normal, text_halign=text_align_center)
+    table.cell(info, 1, 0, bo_signal, text_color=bo_clr, text_size=size.normal, text_halign=text_align_center)
+    table.cell(info, 0, 1, "Bull", text_color=#8888bb, text_size=size.small)
+    table.cell(info, 1, 1, str.tostring(bull_count), text_color=#00ff88, text_size=size.small)
+    table.cell(info, 0, 2, "Bear", text_color=#8888bb, text_size=size.small)
+    table.cell(info, 1, 2, str.tostring(bear_count), text_color=#ff4455, text_size=size.small)
+    table.cell(info, 0, 3, "Div6", text_color=#8888bb, text_size=size.small)
+    table.cell(info, 1, 3, str.tostring(div6, "0.00"), text_color=div6 > 0 ? #00ff88 : #ff4455, text_size=size.small)
+    table.cell(info, 0, 4, "OBV", text_color=#8888bb, text_size=size.small)
+    table.cell(info, 1, 4, str.tostring(obv_norm, "0.00"), text_color=obv_norm > 0 ? #00ff88 : #ff4455, text_size=size.small)
+    table.cell(info, 0, 5, "Signal", text_color=#8888bb, text_size=size.small)
+    table.cell(info, 1, 5, cross_signal, text_color=#ffaa44, text_size=size.small)
+    table.cell(info, 0, 6, "Div1", text_color=#8888bb, text_size=size.small)
+    table.cell(info, 1, 6, div1 > 0 ? "↑" : "↓", text_color=div1 > 0 ? #00ff88 : #ff4455, text_size=size.small)
+    table.cell(info, 0, 7, "Div2/3/5/6", text_color=#8888bb, text_size=size.small)
+    table.cell(info, 1, 7, 
+         (div2>0?"↑":"↓") + " " + (div3>0?"↑":"↓") + " " + (div5>0?"↑":"↓") + " " + (div6>0?"↑":"↓"), 
+         text_color=#ffaa44, text_size=size.small)
+
+// --- Arkaplan ---
+bgcolor(color.new(c_bg, 0))
+avg_score = f_norm(div1, obvNormLen) + f_norm(div2, obvNormLen) + f_norm(div3, obvNormLen) + f_norm(div5, obvNormLen) + f_norm(div6, obvNormLen)
+bgcolor(avg_score > 50 ? color.new(c_up, 92) : avg_score < -50 ? color.new(c_down, 92) : na, title="EC")

@@ -1,0 +1,107 @@
+# =============================================================================
+# RTUG COLOR SURROUND — 7/24 Cloud Scanner (GitHub Actions)
+# =============================================================================
+# Bu workflow GitHub'ın sunucularında çalışır.
+# Windows kapalıyken bile her 30 dakikada bir piyasaları tarar,
+# yeni surround pattern'lerini Telegram'a bildirir.
+#
+# KURULUM (2 dk):
+#   1. GitHub'da yeni repo oluştur (ornek: rtug-scanner)
+#   2. Tüm dosyaları push et:
+#        git init && git add . && git commit -m "initial"
+#        git remote add origin https://github.com/KULLANICI/rtug-scanner.git
+#        git push -u origin main
+#   3. GitHub'da: Settings → Secrets and variables → Actions
+#      "New repository secret" ile ekle:
+#        TELEGRAM_BOT_TOKEN = 8882842172:AAFw6HTJVB6fXndUjH_D4wJpgXoqh6GIZiI
+#        TELEGRAM_CHAT_ID   = 6988108865
+#   4. Workflow otomatik başlar (30 dk'da bir)
+#
+# MANUEL ÇALIŞTIRMA:
+#   GitHub repo → Actions → RTUG Surround → Run workflow
+# =============================================================================
+
+name: RTUG Surround
+
+on:
+  schedule:
+    # Her 30 dakikada bir → free tier'da ~1440 dk/ay (2000 dk limiti içinde)
+    - cron: '*/30 * * * *'
+  
+  # Manuel tetikleme (debug/test için)
+  workflow_dispatch:
+    inputs:
+      skip_bist:
+        description: 'BIST atla'
+        type: boolean
+        default: false
+      skip_us:
+        description: 'US atla'
+        type: boolean
+        default: false
+
+# ─── State cache tekilleştirme ────────────────────────────
+# Aynı anda sadece 1 instance çalışsın, state çakışmasın
+concurrency:
+  group: rtug-surround-scan
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    name: 'RTUG Scan'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10  # Max 10 dk, yoksa timeout
+    
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      
+      # ── State: önceki taramada bildirilen pattern'ler ──
+      - name: Restore notification state
+        id: cache-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: .surround_status.json
+          key: surround-state-${{ github.run_id }}
+          restore-keys: |
+            surround-state-
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy pandas yfinance requests python-dotenv
+      
+      - name: Run scanner (BIST + US Stocks)
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          echo "⏳ Tarama başlıyor: $(date '+%d.%m.%Y %H:%M')"
+          python rtug_surround_daemon.py --once --no-crypto
+          echo "✅ Tarama bitti: $(date '+%d.%m.%Y %H:%M')"
+      
+      # ── State: bir sonraki taramaya taşı ──
+      - name: Save notification state
+        uses: actions/cache/save@v4
+        with:
+          path: .surround_status.json
+          key: surround-state-${{ github.run_id }}
+      
+      - name: Summary
+        run: |
+          echo "## ✅ RTUG Surround Tarama" >> $GITHUB_STEP_SUMMARY
+          echo "| Metrik | Değer |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Zaman | $(date '+%d.%m.%Y %H:%M') |" >> $GITHUB_STEP_SUMMARY
+          echo "| Kaynak | GitHub Actions (ubuntu-latest) |" >> $GITHUB_STEP_SUMMARY
+          if [ -f .surround_status.json ]; then
+            COUNT=$(python -c "import json; d=json.load(open('.surround_status.json')); print(len(d.get('notified',{})))" 2>/dev/null || echo "0")
+            echo "| Kayıtlı pattern | $COUNT |" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "| Durum | ✅ Aktif |" >> $GITHUB_STEP_SUMMARY

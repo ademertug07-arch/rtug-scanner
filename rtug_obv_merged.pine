@@ -1,0 +1,147 @@
+//@version=5
+indicator('RTUG OBV NEON', shorttitle='RTUG OBV')
+
+dynC(v, u, d) => v > v[1] ? u : d
+dynCA(v, u, d, t) => v > v[1] ? color.new(u, t) : color.new(d, t)
+
+len_main   = input.int(20, "Main Period")
+c_main_up  = input.color(color.rgb(0, 180, 255), "Up", group="MAIN")
+c_main_down= input.color(color.rgb(0, 255, 240), "Down", group="MAIN")
+c_main_core= input.color(color.rgb(255, 255, 255), "Core", group="MAIN")
+main_width = input.int(4, "Width", group="MAIN")
+main_glow_w= input.int(9, "Glow W", group="MAIN")
+main_glow_t= input.int(82, "Glow T", group="MAIN")
+
+len_fast1 = input.int(100, "Fast #1", group="#1")
+len_slow1 = input.int(20, "Slow #1", group="#1")
+c_d1_up   = input.color(color.rgb(170, 0, 255), "Up", group="#1")
+c_d1_down = input.color(color.rgb(255, 0, 170), "Down", group="#1")
+c_d1_core = input.color(color.rgb(255, 255, 255), "Core", group="#1")
+d1_width  = input.int(4, "Width", group="#1")
+d1_glow_w = input.int(9, "Glow W", group="#1")
+d1_glow_t = input.int(82, "Glow T", group="#1")
+
+len_fast2 = input.int(70, "Fast #2", group="#2")
+len_slow2 = input.int(15, "Slow #2", group="#2")
+c_d2_up   = input.color(color.rgb(255, 60, 60), "Up", group="#2")
+c_d2_down = input.color(color.rgb(255, 140, 0), "Down", group="#2")
+c_d2_core = input.color(color.rgb(255, 255, 255), "Core", group="#2")
+d2_width  = input.int(4, "Width", group="#2")
+d2_glow_w = input.int(9, "Glow W", group="#2")
+d2_glow_t = input.int(82, "Glow T", group="#2")
+
+len_fast3 = input.int(50, "Fast #3", group="#3")
+len_slow3 = input.int(20, "Slow #3", group="#3")
+c_d3_up   = input.color(color.rgb(0, 255, 120), "Up", group="#3")
+c_d3_down = input.color(color.rgb(180, 255, 0), "Down", group="#3")
+c_d3_core = input.color(color.rgb(255, 255, 255), "Core", group="#3")
+d3_width  = input.int(4, "Width", group="#3")
+d3_glow_w = input.int(9, "Glow W", group="#3")
+d3_glow_t = input.int(82, "Glow T", group="#3")
+
+len_fast5 = input.int(15, "Fast #5", group="#5")
+len_slow5 = input.int(5, "Slow #5", group="#5")
+c_d5_up   = input.color(color.rgb(255, 0, 170), "Up", group="#5")
+c_d5_down = input.color(color.rgb(170, 0, 255), "Down", group="#5")
+c_d5_core = input.color(color.rgb(255, 255, 255), "Core", group="#5")
+d5_width  = input.int(4, "Width", group="#5")
+d5_glow_w = input.int(9, "Glow W", group="#5")
+d5_glow_t = input.int(82, "Glow T", group="#5")
+
+len_fast6 = input.int(8, "Fast #6", group="#6")
+len_slow6 = input.int(3, "Slow #6", group="#6")
+c_d6_up   = input.color(color.rgb(0, 200, 200), "Up", group="#6")
+c_d6_down = input.color(color.rgb(200, 100, 0), "Down", group="#6")
+c_d6_core = input.color(color.rgb(255, 255, 255), "Core", group="#6")
+d6_width  = input.int(4, "Width", group="#6")
+d6_glow_w = input.int(9, "Glow W", group="#6")
+d6_glow_t = input.int(82, "Glow T", group="#6")
+
+c_bull_bg = input.color(color.rgb(170, 0, 255), "Bull", group="BG")
+c_bear_bg = input.color(color.rgb(255, 60, 60), "Bear", group="BG")
+bt = input.int(90, "Bull T", group="BG")
+et = input.int(92, "Bear T", group="BG")
+
+ch = ta.change(close)
+obv1 = ta.cum(ch > 0 ? volume : ch < 0 ? -volume : 0)
+obv_n = (obv1 - ta.lowest(obv1, len_main)) / (ta.highest(obv1, len_main) - ta.lowest(obv1, len_main) + 1e-9) * 2 - 1
+dg = len_main < 2 ? obv1 : obv_n
+
+fast1 = ta.rma(obv1, len_fast1)
+slow1 = ta.rma(obv1, len_slow1)
+div1  = fast1 - slow1
+fast2 = ta.rma(obv1, len_fast2)
+slow2 = ta.rma(obv1, len_slow2)
+div2  = fast2 - slow2
+fast3 = ta.rma(obv1, len_fast3)
+slow3 = ta.rma(obv1, len_slow3)
+div3  = fast3 - slow3
+fast5 = ta.rma(obv1, len_fast5)
+slow5 = ta.rma(obv1, len_slow5)
+div5  = fast5 - slow5
+fast6 = ta.rma(obv1, len_fast6)
+slow6 = ta.rma(obv1, len_slow6)
+div6  = fast6 - slow6
+
+len_fast1_rev = input.int(20, "Fast Rev #1", group="REV #1")
+len_slow1_rev = input.int(100, "Slow Rev #1", group="REV #1")
+len_fast2_rev = input.int(15, "Fast Rev #2", group="REV #2")
+len_slow2_rev = input.int(70, "Slow Rev #2", group="REV #2")
+len_fast3_rev = input.int(20, "Fast Rev #3", group="REV #3")
+len_slow3_rev = input.int(50, "Slow Rev #3", group="REV #3")
+len_fast5_rev = input.int(5, "Fast Rev #5", group="REV #5")
+len_slow5_rev = input.int(15, "Slow Rev #5", group="REV #5")
+len_fast6_rev = input.int(3, "Fast Rev #6", group="REV #6")
+len_slow6_rev = input.int(8, "Slow Rev #6", group="REV #6")
+
+fast1_rev = ta.rma(obv1, len_fast1_rev)
+slow1_rev = ta.rma(obv1, len_slow1_rev)
+div1_rev  = fast1_rev - slow1_rev
+fast2_rev = ta.rma(obv1, len_fast2_rev)
+slow2_rev = ta.rma(obv1, len_slow2_rev)
+div2_rev  = fast2_rev - slow2_rev
+fast3_rev = ta.rma(obv1, len_fast3_rev)
+slow3_rev = ta.rma(obv1, len_slow3_rev)
+div3_rev  = fast3_rev - slow3_rev
+fast5_rev = ta.rma(obv1, len_fast5_rev)
+slow5_rev = ta.rma(obv1, len_slow5_rev)
+div5_rev  = fast5_rev - slow5_rev
+fast6_rev = ta.rma(obv1, len_fast6_rev)
+slow6_rev = ta.rma(obv1, len_slow6_rev)
+div6_rev  = fast6_rev - slow6_rev
+
+hline(0)
+
+plot(div1, color=dynCA(div1, c_d1_up, c_d1_down, d1_glow_t), linewidth=d1_glow_w, title="#1G")
+plot(div1, color=dynC(div1, c_d1_up, c_d1_down), linewidth=d1_width, title="#1T")
+plot(div1, color=c_d1_core, linewidth=1, title="#1C")
+plot(div2, color=dynCA(div2, c_d2_up, c_d2_down, d2_glow_t), linewidth=d2_glow_w, title="#2G")
+plot(div2, color=dynC(div2, c_d2_up, c_d2_down), linewidth=d2_width, title="#2T")
+plot(div2, color=c_d2_core, linewidth=1, title="#2C")
+plot(div3, color=dynCA(div3, c_d3_up, c_d3_down, d3_glow_t), linewidth=d3_glow_w, title="#3G")
+plot(div3, color=dynC(div3, c_d3_up, c_d3_down), linewidth=d3_width, title="#3T")
+plot(div3, color=c_d3_core, linewidth=1, title="#3C")
+plot(div5, color=dynCA(div5, c_d5_up, c_d5_down, d5_glow_t), linewidth=d5_glow_w, title="#5G")
+plot(div5, color=dynC(div5, c_d5_up, c_d5_down), linewidth=d5_width, title="#5T")
+plot(div5, color=c_d5_core, linewidth=1, title="#5C")
+plot(div6, color=dynCA(div6, c_d6_up, c_d6_down, d6_glow_t), linewidth=d6_glow_w, title="#6G")
+plot(div6, color=dynC(div6, c_d6_up, c_d6_down), linewidth=d6_width, title="#6T")
+plot(div6, color=c_d6_core, linewidth=1, title="#6C")
+
+plot(div1_rev, color=dynCA(div1_rev, c_d1_up, c_d1_down, d1_glow_t), linewidth=d1_glow_w, title="#1RG")
+plot(div1_rev, color=dynC(div1_rev, c_d1_up, c_d1_down), linewidth=d1_width, title="#1RT")
+plot(div1_rev, color=c_d1_core, linewidth=1, title="#1RC")
+plot(div2_rev, color=dynCA(div2_rev, c_d2_up, c_d2_down, d2_glow_t), linewidth=d2_glow_w, title="#2RG")
+plot(div2_rev, color=dynC(div2_rev, c_d2_up, c_d2_down), linewidth=d2_width, title="#2RT")
+plot(div2_rev, color=c_d2_core, linewidth=1, title="#2RC")
+plot(div3_rev, color=dynCA(div3_rev, c_d3_up, c_d3_down, d3_glow_t), linewidth=d3_glow_w, title="#3RG")
+plot(div3_rev, color=dynC(div3_rev, c_d3_up, c_d3_down), linewidth=d3_width, title="#3RT")
+plot(div3_rev, color=c_d3_core, linewidth=1, title="#3RC")
+plot(div5_rev, color=dynCA(div5_rev, c_d5_up, c_d5_down, d5_glow_t), linewidth=d5_glow_w, title="#5RG")
+plot(div5_rev, color=dynC(div5_rev, c_d5_up, c_d5_down), linewidth=d5_width, title="#5RT")
+plot(div5_rev, color=c_d5_core, linewidth=1, title="#5RC")
+plot(div6_rev, color=dynCA(div6_rev, c_d6_up, c_d6_down, d6_glow_t), linewidth=d6_glow_w, title="#6RG")
+plot(div6_rev, color=dynC(div6_rev, c_d6_up, c_d6_down), linewidth=d6_width, title="#6RT")
+plot(div6_rev, color=c_d6_core, linewidth=1, title="#6RC")
+
+bgcolor(div1 > 0 and div3 > 0 ? color.new(c_bull_bg, bt) : div1 < 0 and div3 < 0 ? color.new(c_bear_bg, et) : na, title="EC")

@@ -1,0 +1,120 @@
+//@version=5
+indicator('RTUG OBV COMBO', shorttitle='RTUG CMB')
+
+dynC(v, u, d) => v > v[1] ? u : d
+
+len_main   = input.int(20, "Main Period")
+c_main_up  = input.color(color.rgb(0, 180, 255), "Up", group="MAIN")
+c_main_down= input.color(color.rgb(0, 255, 240), "Down", group="MAIN")
+
+len_fast1 = input.int(100, "Fast #1", group="#1")
+len_slow1 = input.int(20, "Slow #1", group="#1")
+c_d1_up   = input.color(color.rgb(170, 0, 255), "Up", group="#1")
+c_d1_down = input.color(color.rgb(255, 0, 170), "Down", group="#1")
+
+len_fast2 = input.int(70, "Fast #2", group="#2")
+len_slow2 = input.int(15, "Slow #2", group="#2")
+c_d2_up   = input.color(color.rgb(255, 60, 60), "Up", group="#2")
+c_d2_down = input.color(color.rgb(255, 140, 0), "Down", group="#2")
+
+len_fast3 = input.int(50, "Fast #3", group="#3")
+len_slow3 = input.int(20, "Slow #3", group="#3")
+c_d3_up   = input.color(color.rgb(0, 255, 120), "Up", group="#3")
+c_d3_down = input.color(color.rgb(180, 255, 0), "Down", group="#3")
+
+len_fast5 = input.int(15, "Fast #5", group="#5")
+len_slow5 = input.int(5, "Slow #5", group="#5")
+c_d5_up   = input.color(color.rgb(255, 0, 170), "Up", group="#5")
+c_d5_down = input.color(color.rgb(170, 0, 255), "Down", group="#5")
+
+len_fast6 = input.int(8, "Fast #6", group="#6")
+len_slow6 = input.int(3, "Slow #6", group="#6")
+c_d6_up   = input.color(color.rgb(0, 200, 200), "Up", group="#6")
+c_d6_down = input.color(color.rgb(200, 100, 0), "Down", group="#6")
+
+c_bull_bg = input.color(color.rgb(170, 0, 255), "Bull", group="BG")
+c_bear_bg = input.color(color.rgb(255, 60, 60), "Bear", group="BG")
+bt = input.int(90, "Bull T", group="BG")
+et = input.int(92, "Bear T", group="BG")
+
+len_fast1_rev = input.int(20, "Fast Rev #1", group="REV #1")
+len_slow1_rev = input.int(100, "Slow Rev #1", group="REV #1")
+len_fast2_rev = input.int(15, "Fast Rev #2", group="REV #2")
+len_slow2_rev = input.int(70, "Slow Rev #2", group="REV #2")
+len_fast3_rev = input.int(20, "Fast Rev #3", group="REV #3")
+len_slow3_rev = input.int(50, "Slow Rev #3", group="REV #3")
+len_fast5_rev = input.int(5, "Fast Rev #5", group="REV #5")
+len_slow5_rev = input.int(15, "Slow Rev #5", group="REV #5")
+len_fast6_rev = input.int(3, "Fast Rev #6", group="REV #6")
+len_slow6_rev = input.int(8, "Slow Rev #6", group="REV #6")
+
+bandGap    = input.float(300, "Bant Merkez Aralığı", group="⚙ Panel Bölme")
+obvNormLen = input.int(200, "Normalize Periyodu", group="⚙ Panel Bölme")
+
+offsetA = bandGap
+offsetB = 0.0
+offsetC = -bandGap
+
+f_normDisp(_val, _len) =>
+    _hi = ta.highest(_val, _len)
+    _lo = ta.lowest(_val, _len)
+    (_val - _lo) / (_hi - _lo + 1e-9) * 200 - 100
+
+ch = ta.change(close)
+obv1 = ta.cum(ch > 0 ? volume : ch < 0 ? -volume : 0)
+obv_n = (obv1 - ta.lowest(obv1, len_main)) / (ta.highest(obv1, len_main) - ta.lowest(obv1, len_main) + 1e-9) * 2 - 1
+dg = len_main < 2 ? obv1 : obv_n
+
+fast1 = ta.rma(obv1, len_fast1)
+slow1 = ta.rma(obv1, len_slow1)
+div1  = fast1 - slow1
+fast2 = ta.rma(obv1, len_fast2)
+slow2 = ta.rma(obv1, len_slow2)
+div2  = fast2 - slow2
+fast3 = ta.rma(obv1, len_fast3)
+slow3 = ta.rma(obv1, len_slow3)
+div3  = fast3 - slow3
+fast5 = ta.rma(obv1, len_fast5)
+slow5 = ta.rma(obv1, len_slow5)
+div5  = fast5 - slow5
+fast6 = ta.rma(obv1, len_fast6)
+slow6 = ta.rma(obv1, len_slow6)
+div6  = fast6 - slow6
+
+fast1_rev = ta.rma(obv1, len_fast1_rev)
+slow1_rev = ta.rma(obv1, len_slow1_rev)
+div1_rev  = fast1_rev - slow1_rev
+fast2_rev = ta.rma(obv1, len_fast2_rev)
+slow2_rev = ta.rma(obv1, len_slow2_rev)
+div2_rev  = fast2_rev - slow2_rev
+fast3_rev = ta.rma(obv1, len_fast3_rev)
+slow3_rev = ta.rma(obv1, len_slow3_rev)
+div3_rev  = fast3_rev - slow3_rev
+fast5_rev = ta.rma(obv1, len_fast5_rev)
+slow5_rev = ta.rma(obv1, len_slow5_rev)
+div5_rev  = fast5_rev - slow5_rev
+fast6_rev = ta.rma(obv1, len_fast6_rev)
+slow6_rev = ta.rma(obv1, len_slow6_rev)
+div6_rev  = fast6_rev - slow6_rev
+
+hline(offsetA, "Band A", color=color.new(color.gray, 70))
+hline(offsetB, "Band B", color=color.new(color.gray, 70))
+hline(offsetC, "Band C", color=color.new(color.gray, 70))
+
+plot(f_normDisp(div1, obvNormLen) + offsetA, color=dynC(div1, c_d1_up, c_d1_down), linewidth=2, title="D1")
+plot(f_normDisp(div2, obvNormLen) + offsetA, color=dynC(div2, c_d2_up, c_d2_down), linewidth=2, title="D2")
+plot(f_normDisp(div3, obvNormLen) + offsetA, color=dynC(div3, c_d3_up, c_d3_down), linewidth=2, title="D3")
+plot(f_normDisp(div5, obvNormLen) + offsetA, color=dynC(div5, c_d5_up, c_d5_down), linewidth=2, title="D5")
+plot(f_normDisp(div6, obvNormLen) + offsetA, color=dynC(div6, c_d6_up, c_d6_down), linewidth=2, title="D6")
+
+plot(f_normDisp(div1_rev, obvNormLen) + offsetB, color=dynC(div1_rev, c_d1_up, c_d1_down), linewidth=1, title="R1", style=plot.style_circles)
+plot(f_normDisp(div2_rev, obvNormLen) + offsetB, color=dynC(div2_rev, c_d2_up, c_d2_down), linewidth=1, title="R2", style=plot.style_circles)
+plot(f_normDisp(div3_rev, obvNormLen) + offsetB, color=dynC(div3_rev, c_d3_up, c_d3_down), linewidth=1, title="R3", style=plot.style_circles)
+plot(f_normDisp(div5_rev, obvNormLen) + offsetB, color=dynC(div5_rev, c_d5_up, c_d5_down), linewidth=1, title="R5", style=plot.style_circles)
+plot(f_normDisp(div6_rev, obvNormLen) + offsetB, color=dynC(div6_rev, c_d6_up, c_d6_down), linewidth=1, title="R6", style=plot.style_circles)
+
+plot(f_normDisp(dg, obvNormLen) + offsetC, color=dynC(dg, c_main_up, c_main_down), linewidth=3, title="OBV")
+
+bgcolor(color.new(color.rgb(5, 5, 12), 0))
+avg = f_normDisp(div1, obvNormLen) + f_normDisp(div2, obvNormLen) + f_normDisp(div3, obvNormLen) + f_normDisp(div5, obvNormLen) + f_normDisp(div6, obvNormLen)
+bgcolor(avg > 0 ? color.new(c_bull_bg, bt) : avg < 0 ? color.new(c_bear_bg, et) : na, title="EC")

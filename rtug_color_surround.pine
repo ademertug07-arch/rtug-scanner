@@ -1,0 +1,373 @@
+//@version=5
+indicator("RTUG Color Surround", shorttitle="RTUG SUR", overlay=false)
+
+// ═══════════════════════════════════════════════════════════
+// 🎨 COLOR SURROUND PATTERN DETECTOR
+// ═══════════════════════════════════════════════════════════
+// TESPİT: Kırmızı/beyaz çizgilerin mavi/mor çizgiler 
+// tarafından "çevrelendiği" durumları bulur.
+//
+// Renk Kodları:
+//   🟣 Mor = Div1 (100/20) — Çok yavaş, büyük trend
+//   🔴 Kırmızı = Div2 (70/15) — Orta trend (SARI-LACİVERT arasında sıkışan)
+//   🟢 Yeşil = Div3 (50/20) — Orta-hızlı
+//   🩷 Pembe = Div5 (15/5) — Hızlı #2
+//   🔵 Mavi = Div6 (8/3) — En hızlı, anlık momentum
+//   ⚪ Beyaz = Core çizgi (tüm div'lerin merkezinden geçer)
+//
+// Pattern: Mor(Div1↑) + Mavi(Div6↑) Kırmızı'yı(Div2↓) çevreliyor
+//          → Uzun+kısa vade boğa, orta vade hala ayı
+//          → DÜŞÜŞ BİTİYOR, ALIM FIRSATI
+// ═══════════════════════════════════════════════════════════
+
+// --- Girdiler ---
+// Renk Surround eşikleri
+show_signals     = input.bool(true, "Show Signals", group="🎯 Pattern")
+surround_thresh  = input.int(2, "Min Surround Count", group="🎯 Pattern", minval=1, maxval=5)
+show_band_a      = input.bool(true, "Show Band A (Forward)", group="📊 Display")
+show_band_b      = input.bool(true, "Show Band B (Reverse)", group="📊 Display")
+show_band_c      = input.bool(true, "Show Band C (OBV)", group="📊 Display")
+
+// Ana divergance parametreleri (RTUG OBV NEON ile aynı)
+len_main   = input.int(20, "Main Period", group="⚙ Settings")
+
+// Div Periods
+lf1 = input.int(100, "Fast #1", group="⚙ Settings")
+ls1 = input.int(20,  "Slow #1", group="⚙ Settings")
+lf2 = input.int(70,  "Fast #2", group="⚙ Settings")
+ls2 = input.int(15,  "Slow #2", group="⚙ Settings")
+lf3 = input.int(50,  "Fast #3", group="⚙ Settings")
+ls3 = input.int(20,  "Slow #3", group="⚙ Settings")
+lf5 = input.int(15,  "Fast #5", group="⚙ Settings")
+ls5 = input.int(5,   "Slow #5", group="⚙ Settings")
+lf6 = input.int(8,   "Fast #6", group="⚙ Settings")
+ls6 = input.int(3,   "Slow #6", group="⚙ Settings")
+
+// Reverse Periods
+lr1f = input.int(20,  "Fast Rev #1", group="⚙ Settings")
+lr1s = input.int(100, "Slow Rev #1", group="⚙ Settings")
+lr2f = input.int(15,  "Fast Rev #2", group="⚙ Settings")
+lr2s = input.int(70,  "Slow Rev #2", group="⚙ Settings")
+lr3f = input.int(20,  "Fast Rev #3", group="⚙ Settings")
+lr3s = input.int(50,  "Slow Rev #3", group="⚙ Settings")
+lr5f = input.int(5,   "Fast Rev #5", group="⚙ Settings")
+lr5s = input.int(15,  "Slow Rev #5", group="⚙ Settings")
+lr6f = input.int(3,   "Fast Rev #6", group="⚙ Settings")
+lr6s = input.int(8,   "Slow Rev #6", group="⚙ Settings")
+
+// Panel
+bandGap = input.float(300, "Band Gap", group="📊 Display")
+obvNormLen = input.int(200, "Norm Period", group="📊 Display")
+
+// Renkler (NEON paleti)
+c_d1_up   = input.color(color.rgb(170, 0, 255), "Div1 Up (Purple)", group="🎨 Colors")
+c_d1_down = input.color(color.rgb(255, 0, 170), "Div1 Down (Pink)", group="🎨 Colors")
+c_d2_up   = input.color(color.rgb(255, 60, 60), "Div2 Up (Red)", group="🎨 Colors")
+c_d2_down = input.color(color.rgb(255, 140, 0), "Div2 Down (Orange)", group="🎨 Colors")
+c_d6_up   = input.color(color.rgb(0, 200, 200), "Div6 Up (Blue)", group="🎨 Colors")
+c_d6_down = input.color(color.rgb(200, 100, 0), "Div6 Down (Brown)", group="🎨 Colors")
+
+// ═══════════════════════════════════════════════════════════
+// 📐 HESAPLAMALAR (RTUG OBV NEON ile birebir aynı)
+// ═══════════════════════════════════════════════════════════
+
+dynC(v, u, d) => v > v[1] ? u : d
+f_norm(_val, _len) =>
+    _hi = ta.highest(_val, _len)
+    _lo = ta.lowest(_val, _len)
+    (_val - _lo) / (_hi - _lo + 1e-9) * 200 - 100
+
+// OBV
+ch = ta.change(close)
+obv_raw = ta.cum(ch > 0 ? volume : ch < 0 ? -volume : 0)
+obv_norm = (obv_raw - ta.lowest(obv_raw, len_main)) / (ta.highest(obv_raw, len_main) - ta.lowest(obv_raw, len_main) + 1e-9) * 2 - 1
+
+// Forward Divergences
+f_div(_src, _fast, _slow) =>
+    _obv = ta.cum(ta.change(_src) > 0 ? volume : ta.change(_src) < 0 ? -volume : 0)
+    ta.rma(_obv, _fast) - ta.rma(_obv, _slow)
+
+div1 = f_div(close, lf1, ls1)
+div2 = f_div(close, lf2, ls2)
+div3 = f_div(close, lf3, ls3)
+div5 = f_div(close, lf5, ls5)
+div6 = f_div(close, lf6, ls6)
+
+// Reverse Divergences
+f_obv_src(_src) =>
+    ta.cum(ta.change(_src) > 0 ? volume : ta.change(_src) < 0 ? -volume : 0)
+
+o1 = f_obv_src(close); o2 = f_obv_src(close); o3 = f_obv_src(close)
+o5 = f_obv_src(close); o6 = f_obv_src(close)
+
+div1r = ta.rma(o1, lr1f) - ta.rma(o1, lr1s)
+div2r = ta.rma(o2, lr2f) - ta.rma(o2, lr2s)
+div3r = ta.rma(o3, lr3f) - ta.rma(o3, lr3s)
+div5r = ta.rma(o5, lr5f) - ta.rma(o5, lr5s)
+div6r = ta.rma(o6, lr6f) - ta.rma(o6, lr6s)
+
+// ═══════════════════════════════════════════════════════════
+// 🎯 RENK SURROUND PATTERN TESPİTİ
+// ═══════════════════════════════════════════════════════════
+
+// --- Renk durumları (hangi div hangi renkte?) ---
+// NOT: Burada renkleri literal olarak değil, yön olarak değerlendiriyoruz
+// Yukarı yön = "mor/mavi" (bullish), aşağı yön = "kırmızı" (bearish)
+
+// Div1: Mor/Purple = Uptrend, Pink = Downtrend
+// Div2: Red = Uptrend, Orange = Downtrend
+// Div6: Blue/Teal = Uptrend, Brown = Downtrend
+
+d1_bull = div1 > 0   // MOR (Purple) - uzun vade boğa
+d1_bear = div1 < 0   // PEMBE (Pink) - uzun vade ayı
+d2_bull = div2 > 0   // KIRMIZI (Red) - orta vade boğa
+d2_bear = div2 < 0   // TURUNCU (Orange) - orta vade ayı
+d6_bull = div6 > 0   // MAVİ (Blue) - kısa vade boğa
+d6_bear = div6 < 0   // KAHVE (Brown) - kısa vade ayı
+
+// --- Trend yönü (OBV ana trend) ---
+obv_up = obv_norm > obv_norm[1]
+obv_strong_bull = obv_norm > 0.3
+obv_strong_bear = obv_norm < -0.3
+
+// ============================================================
+// 🟢 PATTERN 1: BOĞA SARMA (Purple+Blue surround Red)
+// ============================================================
+// Mor(Div1↑) + Mavi(Div6↑) trend yukarı
+// Kırmızı(Div2↓) hala aşağıda — "sıkışmış" durumda
+// Anlamı: Uzun+vade boğa, orta vade henüz dönmedi
+//         → Düşüşün sonu, AL bölgesi
+// ============================================================
+bull_surround_1 = d1_bull and d6_bull and d2_bear                    // Mor+Mavi Kırmızı'yı çevreliyor
+bull_surround_2 = d1_bull and d6_bull and (d2_bear or div5 < 0)     // Daha geniş: Div5(pembe) de ayıysa
+bull_surround_3 = d1_bull and d6_bull and d2_bear and div5 < 0      // Tam sarma: tüm hızlılar ayı
+bull_surround_4 = d1_bull and d6_bull and obv_up                    // OBV de onaylıyorsa
+
+// ============================================================
+// 🔴 PATTERN 2: AYI SARMA (Red+Orange surround Blue)
+// ============================================================
+// Pembe(Div1↓) + Kahve(Div6↓) trend aşağı
+// Kırmızı(Div2↑) hala yukarıda — "sıkışmış"
+// Anlamı: Uzun+kısa vade ayı, orta vade direniyor
+//         → Yükselişin sonu, SAT bölgesi
+// ============================================================
+bear_surround_1 = d1_bear and d6_bear and d2_bull                   // Kırmızıyı ayılar çevreliyor (aslında bu: Pembeler+Kahve Kırmızıyı sarıyor)
+bear_surround_2 = d1_bear and d6_bear and (d2_bull or div5 > 0)
+bear_surround_3 = d1_bear and d6_bear and d2_bull and div5 > 0
+bear_surround_4 = d1_bear and d6_bear and not obv_up
+
+// ============================================================
+// 🟣 PATTERN 3: REVERSE ÇEMBER (Reverse circles surround lines)
+// ============================================================
+// Reverse divergences (daireler) farklı yön gösteriyor
+// Forward divergences (çizgiler) farklı yön
+// ============================================================
+reverse_bull = div1r > 0 and div2r > 0 and div6r > 0 and (div1 < 0 or div2 < 0)
+reverse_bear = div1r < 0 and div2r < 0 and div6r < 0 and (div1 > 0 or div2 > 0)
+
+// ============================================================
+// ⚡ PATTERN 4: SICAKLIK (Temp) — Renk değişim hızı
+// ============================================================
+// Div2'nin kırmızıdan turuncuya (veya tersi) döndüğü an
+// ============================================================
+d2_turning_bull = d2_bear and div2 > div2[1] and div2[1] > div2[2]  // Kırmızıya dönüş başlangıcı
+d2_turning_bear = d2_bull and div2 < div2[1] and div2[1] < div2[2]  // Turuncuya dönüş başlangıcı
+
+// ============================================================
+// 🔥 PATTERN 5: DERİN SARMA (Deep Surround — çok katmanlı)
+// ============================================================
+// 5 divergence'ın 4+'ü aynı yönü gösterirken, 1 tanesi ters
+// ============================================================
+div_directions = (div1 > 0 ? 1 : 0) + (div2 > 0 ? 1 : 0) + (div3 > 0 ? 1 : 0) + (div5 > 0 ? 1 : 0) + (div6 > 0 ? 1 : 0)
+deep_bull = div_directions >= 4 and (div2 < 0 or div5 < 0)  // 4/5 bullish, 1 tane bearish "surround"
+deep_bear = div_directions <= 1 and (div2 > 0 or div5 > 0)  // 4/5 bearish, 1 tane bullish "surround"
+
+// ============================================================
+// 🎯 NİHAİ SİNYAL KARARI
+// ============================================================
+var signal_type = ""
+var signal_strength = 0
+
+// Sinyal tipini belirle
+if bull_surround_1 or bull_surround_2 or bull_surround_3 or bull_surround_4 or reverse_bull or deep_bull
+    signal_type := "BULLISH_SURROUND"
+    signal_strength := (bull_surround_4 ? 1 : 0) + (bull_surround_3 ? 2 : 0) + (reverse_bull ? 2 : 0) + (deep_bull ? 2 : 0) + 1
+    signal_strength := math.min(signal_strength, 5)
+
+if bear_surround_1 or bear_surround_2 or bear_surround_3 or bear_surround_4 or reverse_bear or deep_bear
+    signal_type := "BEARISH_SURROUND"
+    signal_strength := (bear_surround_4 ? 1 : 0) + (bear_surround_3 ? 2 : 0) + (reverse_bear ? 2 : 0) + (deep_bear ? 2 : 0) + 1
+    signal_strength := math.min(signal_strength, 5)
+
+// ═══════════════════════════════════════════════════════════
+// 📊 GÖSTERGE ÇİZİMLERİ
+// ═══════════════════════════════════════════════════════════
+
+offsetA = bandGap
+offsetB = 0.0
+offsetC = -bandGap
+
+hline(offsetA, "Band A", color.new(color.gray, 70))
+hline(offsetB, "Band B", color.new(color.gray, 70))
+hline(offsetC, "Band C", color.new(color.gray, 70))
+
+// --- Band A: Forward Divergences (renkli) ---
+if show_band_a
+    plot(f_norm(div1, obvNormLen) + offsetA, "Div1", dynC(div1, c_d1_up, c_d1_down), 2)
+    plot(f_norm(div2, obvNormLen) + offsetA, "Div2", dynC(div2, c_d2_up, c_d2_down), 2)
+    plot(f_norm(div3, obvNormLen) + offsetA, "Div3", dynC(div3, color.rgb(0,255,120), color.rgb(180,255,0)), 2)
+    plot(f_norm(div5, obvNormLen) + offsetA, "Div5", dynC(div5, color.rgb(255,0,170), color.rgb(170,0,255)), 3)
+    plot(f_norm(div6, obvNormLen) + offsetA, "Div6", dynC(div6, c_d6_up, c_d6_down), 3)
+
+// --- Band B: Reverse Divergences (daire) ---
+if show_band_b
+    plot(f_norm(div1r, obvNormLen) + offsetB, "R1", dynC(div1r, c_d1_up, c_d1_down), 1, plot.style_circles)
+    plot(f_norm(div2r, obvNormLen) + offsetB, "R2", dynC(div2r, c_d2_up, c_d2_down), 1, plot.style_circles)
+    plot(f_norm(div3r, obvNormLen) + offsetB, "R3", dynC(div3r, color.rgb(0,255,120), color.rgb(180,255,0)), 1, plot.style_circles)
+    plot(f_norm(div5r, obvNormLen) + offsetB, "R5", dynC(div5r, color.rgb(255,0,170), color.rgb(170,0,255)), 1, plot.style_circles)
+    plot(f_norm(div6r, obvNormLen) + offsetB, "R6", dynC(div6r, c_d6_up, c_d6_down), 1, plot.style_circles)
+
+// --- Band C: OBV ---
+if show_band_c
+    plot(obv_norm * 100 + offsetC, "OBV", dynC(obv_norm, color.rgb(255,225,40), color.rgb(50,245,255)), 3)
+
+// --- Sinyal işaretleri ---
+if show_signals
+    // BOĞA SARMA → Mor+Mavi sarması
+    plotshape(bull_surround_1 ? offsetA + 50 : na, "BS1", 
+              style=shape.labelup, location=location.absolute, 
+              color=color.new(color.rgb(170,0,255), 40), text="🟣", size=size.tiny)
+    plotshape(bull_surround_3 ? offsetA + 30 : na, "BS3",
+              style=shape.labelup, location=location.absolute,
+              color=color.new(color.rgb(0,255,120), 40), text="🟢", size=size.tiny)
+    
+    // AYI SARMA → Pembe+Kahve sarması
+    plotshape(bear_surround_1 ? offsetA - 50 : na, "AS1",
+              style=shape.labeldown, location=location.absolute,
+              color=color.new(color.rgb(255,60,60), 40), text="🔴", size=size.tiny)
+    plotshape(bear_surround_3 ? offsetA - 30 : na, "AS3",
+              style=shape.labeldown, location=location.absolute,
+              color=color.new(color.rgb(255,140,0), 40), text="🟠", size=size.tiny)
+
+// --- Bilgi Paneli ---
+var table info = table.new(position.top_right, 2, 12, bgcolor=color.new(#0a0a1a, 85), border_color=#333355)
+if barstate.islast
+    sig_clr = signal_type == "BULLISH_SURROUND" ? color.rgb(0,255,120) : 
+              signal_type == "BEARISH_SURROUND" ? color.rgb(255,60,60) : color.rgb(136,136,153)
+    
+    table.cell(info, 0, 0, "RTUG SUR", text_color=#ffffff, text_size=size.normal)
+    table.cell(info, 1, 0, signal_type != "" ? signal_type : "NONE", text_color=sig_clr, text_size=size.normal)
+    
+    table.cell(info, 0, 1, "Strength", text_color=#8888bb, text_size=size.small)
+    table.cell(info, 1, 1, str.tostring(signal_strength) + "/5", text_color=sig_clr, text_size=size.small)
+    
+    // Renk durumu göstergesi
+    table.cell(info, 0, 2, "Div1(Purple)", text_color=#8888bb, text_size=size.small)
+    table.cell(info, 1, 2, div1 > 0 ? "MOR ↑" : "PEMBE ↓", 
+               text_color=d1_bull ? color.rgb(170,0,255) : color.rgb(255,0,170), text_size=size.small)
+    
+    table.cell(info, 0, 3, "Div2(Red)", text_color=#8888bb, text_size=size.small)
+    table.cell(info, 1, 3, div2 > 0 ? "KIRMIZI ↑" : "TURUNCU ↓",
+               text_color=d2_bull ? color.rgb(255,60,60) : color.rgb(255,140,0), text_size=size.small)
+    
+    table.cell(info, 0, 4, "Div6(Blue)", text_color=#8888bb, text_size=size.small)
+    table.cell(info, 1, 4, div6 > 0 ? "MAVİ ↑" : "KAHVE ↓",
+               text_color=d6_bull ? color.rgb(0,200,200) : color.rgb(200,100,0), text_size=size.small)
+    
+    table.cell(info, 0, 5, "Div5(Pink)", text_color=#8888bb, text_size=size.small)
+    table.cell(info, 1, 5, div5 > 0 ? "PEMBE ↑" : "MOR ↓",
+               text_color=div5 > 0 ? color.rgb(255,0,170) : color.rgb(170,0,255), text_size=size.small)
+    
+    table.cell(info, 0, 6, "Div3(Green)", text_color=#8888bb, text_size=size.small)
+    table.cell(info, 1, 6, div3 > 0 ? "YEŞİL ↑" : "SARI ↓",
+               text_color=div3 > 0 ? color.rgb(0,255,120) : color.rgb(180,255,0), text_size=size.small)
+    
+    table.cell(info, 0, 7, "OBV", text_color=#8888bb, text_size=size.small)
+    table.cell(info, 1, 7, obv_norm > 0 ? "BOĞA" : "AYI",
+               text_color=obv_norm > 0 ? color.rgb(0,255,120) : color.rgb(255,60,60), text_size=size.small)
+    
+    table.cell(info, 0, 8, "Div Score", text_color=#8888bb, text_size=size.small)
+    table.cell(info, 1, 8, str.tostring(div_directions) + "/5 Bullish",
+               text_color=div_directions >= 3 ? color.rgb(0,255,120) : color.rgb(255,60,60), text_size=size.small)
+    
+    table.cell(info, 0, 9, "Reverse", text_color=#8888bb, text_size=size.small)
+    table.cell(info, 1, 9, reverse_bull ? "BULL ÇEMBER" : reverse_bear ? "BEAR ÇEMBER" : "NÖTR",
+               text_color=reverse_bull ? color.rgb(0,255,120) : reverse_bear ? color.rgb(255,60,60) : color.rgb(136,136,153), text_size=size.small)
+    
+    table.cell(info, 0, 10, "Deep Surr.", text_color=#8888bb, text_size=size.small)
+    table.cell(info, 1, 10, deep_bull ? "🟣 DERİN BOĞA" : deep_bear ? "🔴 DERİN AYI" : "-",
+               text_color=deep_bull ? color.rgb(0,255,120) : deep_bear ? color.rgb(255,60,60) : color.rgb(136,136,153), text_size=size.small)
+    
+    table.cell(info, 0, 11, "Div2 Turn", text_color=#8888bb, text_size=size.small)
+    table.cell(info, 1, 11, d2_turning_bull ? "🔄 BOĞA DÖNÜŞ" : d2_turning_bear ? "🔄 AYI DÖNÜŞ" : "-",
+               text_color=d2_turning_bull ? color.rgb(0,255,120) : d2_turning_bear ? color.rgb(255,60,60) : color.rgb(136,136,153), text_size=size.small)
+
+// --- Arkaplan ---
+bgcolor(color.new(color.rgb(5, 5, 12), 0))
+avg_score = f_norm(div1, obvNormLen) + f_norm(div2, obvNormLen) + f_norm(div3, obvNormLen) + f_norm(div5, obvNormLen) + f_norm(div6, obvNormLen)
+bgcolor(bull_surround_3 or deep_bull ? color.new(color.rgb(0,255,120), 88) : na, title="Bull BG")
+bgcolor(bear_surround_3 or deep_bear ? color.new(color.rgb(255,60,60), 88) : na, title="Bear BG")
+
+// ═══════════════════════════════════════════════════════════
+// 🔔 ALERT CONDITIONS
+// ═══════════════════════════════════════════════════════════
+
+// Webhook JSON template
+tv_json_msg() =>
+    "{\"ticker\":\"{{ticker}}\",\"close\":\"{{close}}\",\"time\":\"{{time}}\",\"exchange\":\"{{exchange}}\",\"type\":\""
+
+// --- Alert 1: Bullish Surround (Mor+Mavi Kırmızı'yı Sardı) ---
+alertcondition(bull_surround_1, 
+    title="🟣 BULLISH SURROUND (Purple+Blue wrap Red)",
+    message=tv_json_msg() + "BULLISH_SURROUND\",\"strength\":\"" + str.tostring(signal_strength) + "\",\"d1\":\"" + str.tostring(div1, "0.00") + "\",\"d2\":\"" + str.tostring(div2, "0.00") + "\",\"d6\":\"" + str.tostring(div6, "0.00") + "\"}")
+
+// --- Alert 2: Bearish Surround ---
+alertcondition(bear_surround_1,
+    title="🔴 BEARISH SURROUND (Pink+Brown wrap Red)",
+    message=tv_json_msg() + "BEARISH_SURROUND\",\"strength\":\"" + str.tostring(signal_strength) + "\",\"d1\":\"" + str.tostring(div1, "0.00") + "\",\"d2\":\"" + str.tostring(div2, "0.00") + "\",\"d6\":\"" + str.tostring(div6, "0.00") + "\"}")
+
+// --- Alert 3: Strong Bullish Surround (tam sarma) ---
+alertcondition(bull_surround_3,
+    title="🟢 STRONG BULLISH SURROUND (Div2+Div5 wrapped by Div1+Div6)",
+    message=tv_json_msg() + "STRONG_BULLISH_SURROUND\",\"strength\":\"3\"}")
+
+// --- Alert 4: Strong Bearish Surround ---
+alertcondition(bear_surround_3,
+    title="🟠 STRONG BEARISH SURROUND (Div2+Div5 wrapped by Div1+Div6)",
+    message=tv_json_msg() + "STRONG_BEARISH_SURROUND\",\"strength\":\"3\"}")
+
+// --- Alert 5: Deep Surround (4/5 divergence consensus) ---
+alertcondition(deep_bull,
+    title="🟣 DEEP BULLISH SURROUND (4/5 bullish, 1 lagging)",
+    message=tv_json_msg() + "DEEP_BULLISH_SURROUND\",\"directions\":\"" + str.tostring(div_directions) + "\"}")
+
+alertcondition(deep_bear,
+    title="🔴 DEEP BEARISH SURROUND (4/5 bearish, 1 lagging)",
+    message=tv_json_msg() + "DEEP_BEARISH_SURROUND\",\"directions\":\"" + str.tostring(div_directions) + "\"}")
+
+// --- Alert 6: OBV Confirmed Surround ---
+alertcondition(bull_surround_4,
+    title="✅ OBV CONFIRMED BULLISH SURROUND",
+    message=tv_json_msg() + "OBV_CONFIRMED_BULLISH_SURROUND\"}")
+
+alertcondition(bear_surround_4,
+    title="❌ OBV CONFIRMED BEARISH SURROUND",
+    message=tv_json_msg() + "OBV_CONFIRMED_BEARISH_SURROUND\"}")
+
+// --- Alert 7: Reverse Circle Surround ---
+alertcondition(reverse_bull,
+    title="🔵 REVERSE CIRCLE BULLISH (Circles bullish, lines not yet)",
+    message=tv_json_msg() + "REVERSE_CIRCLE_BULLISH\"}")
+
+alertcondition(reverse_bear,
+    title="🟠 REVERSE CIRCLE BEARISH (Circles bearish, lines not yet)",
+    message=tv_json_msg() + "REVERSE_CIRCLE_BEARISH\"}")
+
+// --- Alert 8: Div2 Color Turn (Kırmızı/Turuncu dönüş) ---
+alertcondition(d2_turning_bull,
+    title="🔄 DIV2 TURNING BULLISH (Orange→Red transition)",
+    message=tv_json_msg() + "DIV2_TURNING_BULLISH\"}")
+
+alertcondition(d2_turning_bear,
+    title="🔄 DIV2 TURNING BEARISH (Red→Orange transition)",
+    message=tv_json_msg() + "DIV2_TURNING_BEARISH\"}")

@@ -1,0 +1,335 @@
+// © ertug32 — BİRLEŞTİRİLMİŞ PANEL: OBV-A + OBV-B + Surge Pulse (ΔΨ) [CYBER NEON RENK SİSTEMİ]
+//@version=5
+indicator('☪RTUĞ ✯ [OBV-A + OBV-B + SURGE PULSE ΔΨ — NEON] ☪RTUĞ ✯', shorttitle='RTUĞ TRIPLE OBV/ΔΨ', overlay=false)
+
+// ═══════════════════════════════════════════════════════════
+// 🖌️ DİNAMİK RENK YARDIMCI FONKSİYONLARI
+// ═══════════════════════════════════════════════════════════
+dynC(val, cu, cd)     => val > val[1] ? cu : cd
+dynCA(val, cu, cd, t) => val > val[1] ? color.new(cu, t) : color.new(cd, t)
+
+// ═══════════════════════════════════════════════════════════
+// 🎨 ORTAK NEON PALET — KULLANICI KONTROLLERİ
+// ═══════════════════════════════════════════════════════════
+c_blue   = input.color(color.rgb(0,   170, 255), title="BLUE   (Div6 / Hızlı #1)", group="🎨 Neon Palet")
+c_red    = input.color(color.rgb(255,  45,  85), title="RED    (Div5 / Hızlı #2)", group="🎨 Neon Palet")
+c_purple = input.color(color.rgb(180,  60, 255), title="PURPLE (Div2)",             group="🎨 Neon Palet")
+c_green  = input.color(color.rgb( 60, 255, 130), title="GREEN  (Div3 / Hist↑)",    group="🎨 Neon Palet")
+c_orange = input.color(color.rgb(255, 150,  30), title="ORANGE (Div4)",             group="🎨 Neon Palet")
+c_pink   = input.color(color.rgb(255,  45, 200), title="PINK   (Div1)",             group="🎨 Neon Palet")
+c_yellow = input.color(color.rgb(255, 225,  40), title="YELLOW (OBV Norm ↑)",       group="🎨 Neon Palet")
+c_cyan   = input.color(color.rgb( 50, 245, 255), title="CYAN   (OBV Norm ↓)",       group="🎨 Neon Palet")
+c_teal   = input.color(color.rgb(  0, 255, 195), title="TEAL   (Trigger)",          group="🎨 Neon Palet")
+c_bg     = input.color(color.rgb(  5,   5,  12), title="Arka Plan",                 group="🎨 Neon Palet")
+
+// ═══════════════════════════════════════════════════════════
+// 🎨 BANT A — RENK PANELİ
+// ═══════════════════════════════════════════════════════════
+a_c_hist_up   = input.color(color.rgb( 60, 255, 130), title="A: Hist ↑ Renk",        group="🎨 Bant A Renkleri")
+a_c_hist_down = input.color(color.rgb(255,  45,  85), title="A: Hist ↓ Renk",        group="🎨 Bant A Renkleri")
+a_c_norm_up   = input.color(color.rgb(255, 225,  40), title="A: OBV Norm ↑ Renk",    group="🎨 Bant A Renkleri")
+a_c_norm_down = input.color(color.rgb( 50, 245, 255), title="A: OBV Norm ↓ Renk",    group="🎨 Bant A Renkleri")
+
+
+a_c_trigger   = input.color(color.rgb(  0, 255, 195), title="A: Trigger Renk",        group="🎨 Bant A Renkleri")
+a_c_div1_up   = input.color(color.rgb(255,  45, 200), title="A: Div1 ↑ (Pink)",       group="🎨 Bant A Renkleri")
+a_c_div1_down = input.color(color.rgb(255, 100, 220), title="A: Div1 ↓",              group="🎨 Bant A Renkleri")
+a_c_div2_up   = input.color(color.rgb(180,  60, 255), title="A: Div2 ↑ (Purple)",     group="🎨 Bant A Renkleri")
+a_c_div2_down = input.color(color.rgb(220, 120, 255), title="A: Div2 ↓",              group="🎨 Bant A Renkleri")
+a_c_div3_up   = input.color(color.rgb( 60, 255, 130), title="A: Div3 ↑ (Green)",      group="🎨 Bant A Renkleri")
+a_c_div3_down = input.color(color.rgb(180, 255,   0), title="A: Div3 ↓",              group="🎨 Bant A Renkleri")
+a_c_div4_up   = input.color(color.rgb(255, 150,  30), title="A: Div4 ↑ (Orange)",     group="🎨 Bant A Renkleri")
+a_c_div4_down = input.color(color.rgb(255, 220,   0), title="A: Div4 ↓",              group="🎨 Bant A Renkleri")
+a_c_div5_up   = input.color(color.rgb(255,  45,  85), title="A: Div5 ↑ (Red/Hızlı)", group="🎨 Bant A Renkleri")
+a_c_div5_down = input.color(color.rgb(255, 120,   0), title="A: Div5 ↓",              group="🎨 Bant A Renkleri")
+a_c_div6_up   = input.color(color.rgb(  0, 170, 255), title="A: Div6 ↑ (Blue/Hızlı)",group="🎨 Bant A Renkleri")
+a_c_div6_down = input.color(color.rgb(  0, 255, 240), title="A: Div6 ↓",              group="🎨 Bant A Renkleri")
+a_rev_transp  = input.int(40, minval=0, maxval=99,    title="A: Reverse Div Şeffaflık", group="🎨 Bant A Renkleri")
+
+// ═══════════════════════════════════════════════════════════
+// 🎨 BANT B — RENK PANELİ
+// ═══════════════════════════════════════════════════════════
+b_c_hist_up   = input.color(color.rgb( 60, 255, 130), title="B: Hist ↑ Renk",        group="🎨 Bant B Renkleri")
+b_c_hist_down = input.color(color.rgb(255,  45,  85), title="B: Hist ↓ Renk",        group="🎨 Bant B Renkleri")
+b_c_norm_up   = input.color(color.rgb(255, 225,  40), title="B: OBV Norm ↑ Renk",    group="🎨 Bant B Renkleri")
+b_c_norm_down = input.color(color.rgb( 50, 245, 255), title="B: OBV Norm ↓ Renk",    group="🎨 Bant B Renkleri")
+
+
+b_c_trigger   = input.color(color.rgb(  0, 255, 195), title="B: Trigger Renk",        group="🎨 Bant B Renkleri")
+b_c_div1_up   = input.color(color.rgb(255,  45, 200), title="B: Div1 ↑ (Pink)",       group="🎨 Bant B Renkleri")
+b_c_div1_down = input.color(color.rgb(255, 100, 220), title="B: Div1 ↓",              group="🎨 Bant B Renkleri")
+b_c_div2_up   = input.color(color.rgb(180,  60, 255), title="B: Div2 ↑ (Purple)",     group="🎨 Bant B Renkleri")
+b_c_div2_down = input.color(color.rgb(220, 120, 255), title="B: Div2 ↓",              group="🎨 Bant B Renkleri")
+b_c_div3_up   = input.color(color.rgb( 60, 255, 130), title="B: Div3 ↑ (Green)",      group="🎨 Bant B Renkleri")
+b_c_div3_down = input.color(color.rgb(180, 255,   0), title="B: Div3 ↓",              group="🎨 Bant B Renkleri")
+b_c_div4_up   = input.color(color.rgb(255, 150,  30), title="B: Div4 ↑ (Orange)",     group="🎨 Bant B Renkleri")
+b_c_div4_down = input.color(color.rgb(255, 220,   0), title="B: Div4 ↓",              group="🎨 Bant B Renkleri")
+b_c_div5_up   = input.color(color.rgb(255,  45,  85), title="B: Div5 ↑ (Red/Hızlı)", group="🎨 Bant B Renkleri")
+b_c_div5_down = input.color(color.rgb(255, 120,   0), title="B: Div5 ↓",              group="🎨 Bant B Renkleri")
+b_c_div6_up   = input.color(color.rgb(  0, 170, 255), title="B: Div6 ↑ (Blue/Hızlı)",group="🎨 Bant B Renkleri")
+b_c_div6_down = input.color(color.rgb(  0, 255, 240), title="B: Div6 ↓",              group="🎨 Bant B Renkleri")
+b_rev_transp  = input.int(40, minval=0, maxval=99,    title="B: Reverse Div Şeffaflık", group="🎨 Bant B Renkleri")
+
+// ═══════════════════════════════════════════════════════════
+// ⚙️ PANEL BÖLME + ORTAK FONKSİYONLAR
+// ═══════════════════════════════════════════════════════════
+bandGap = input.float(300, title="Bant Merkez Aralığı", group="⚙ Panel Bölme")
+offsetA = bandGap
+offsetB = 0.0
+offsetC = -bandGap
+
+f_normDisp(_val, _len) =>
+    _hi = ta.highest(_val, _len)
+    _lo = ta.lowest(_val, _len)
+    (_val - _lo) / (_hi - _lo + 1e-9) * 200 - 100
+
+f_obvMain(_np, _tsp) =>
+    _chg  = ta.change(close)
+    _raw  = ta.cum(_chg > 0 ? volume : _chg < 0 ? -volume : 0)
+    _norm = (_raw - ta.lowest(_raw, _np)) / (ta.highest(_raw, _np) - ta.lowest(_raw, _np) + 0.000001) * 2 - 1
+    _norm2 = _np < 2 ? _raw : _norm
+    _trig  = ta.wma(_norm2, _tsp)
+    _hist2 = math.max(math.min(_norm2 - _trig, 1), -1)
+    [_norm2, _trig, _hist2]
+
+f_obvDiv(_src, _lenFast, _lenSlow) =>
+    _chg = ta.change(_src)
+    _obv = ta.cum(_chg > 0 ? volume : _chg < 0 ? -volume : 0)
+    _fast = ta.rma(_obv, _lenFast)
+    _slow = ta.rma(_obv, _lenSlow)
+    [_obv, _fast - _slow]
+
+f_revDiv(_obv, _lenFast, _lenSlow) =>
+    ta.rma(_obv, _lenFast) - ta.rma(_obv, _lenSlow)
+
+// ════════════════════════════════════════════════════════════
+// BÖLÜM A — OBV #1 (ÜST BANT)
+// ════════════════════════════════════════════════════════════
+a_np  = input(20,  title='A: Normalize', group="A: OBV #1 (Üst Bant)")
+a_tsp = input(9,   title='A: Trigger',   group="A: OBV #1 (Üst Bant)")
+a_h      = input(true,  title='A: Histogram',    group="A: OBV #1 (Üst Bant)")
+a_docol  = input(true,  title='A: Color Change', group="A: OBV #1 (Üst Bant)")
+a_obvNormLen = input.int(200, minval=10, title="A: Ham Diverjans Normalize Periyodu", group="A: OBV #1 (Üst Bant)")
+
+[a_obv_norm2, a_Trigger, a_Hist2] = f_obvMain(a_np, a_tsp)
+
+// — A: Temel çizgiler —
+plot((a_h ? a_Hist2 : na) * 100 + offsetA,
+     color     = dynC(a_Hist2, a_c_hist_up, a_c_hist_down),
+     style     = plot.style_line, linewidth=2, title='A: Hist')
+
+plot(a_obv_norm2 * 100 + offsetA,
+     color     = a_docol ? dynC(a_obv_norm2, a_c_norm_up, a_c_norm_down) : a_c_norm_down,
+     style     = plot.style_line, title='A: OBV Norm')
+
+
+plot(a_Trigger * 100 + offsetA,
+     color     = a_c_trigger,
+     style     = plot.style_line, title='A: Trigger')
+
+// — A: Div1 —
+a_src1 = input.source(close, title="A: OBV Source #1", group="A: OBV #1 (Üst Bant)")
+a_lf1  = input.int(100, minval=1, title="A: Length Fast MA #1", group="A: OBV #1 (Üst Bant)")
+a_ls1  = input.int(20,  minval=1, title="A: Length Slow MA #1", group="A: OBV #1 (Üst Bant)")
+[a_o1, a_div1] = f_obvDiv(a_src1, a_lf1, a_ls1)
+a_div1_disp = f_normDisp(a_div1, a_obvNormLen)
+plot(a_div1_disp + offsetA, title="A: Div1",
+     color=dynC(a_div1_disp, a_c_div1_up, a_c_div1_down), linewidth=2, style=plot.style_line)
+
+// — A: Div2 —
+a_src2 = input.source(close, title="A: OBV Source #2", group="A: OBV #1 (Üst Bant)")
+a_lf2  = input.int(70, minval=1, title="A: Length Fast MA #2", group="A: OBV #1 (Üst Bant)")
+a_ls2  = input.int(15, minval=1, title="A: Length Slow MA #2", group="A: OBV #1 (Üst Bant)")
+[a_o2, a_div2] = f_obvDiv(a_src2, a_lf2, a_ls2)
+a_div2_disp = f_normDisp(a_div2, a_obvNormLen)
+plot(a_div2_disp + offsetA, title="A: Div2",
+     color=dynC(a_div2_disp, a_c_div2_up, a_c_div2_down), linewidth=2, style=plot.style_line)
+
+// — A: Div3 —
+a_src3 = input.source(close, title="A: OBV Source #3", group="A: OBV #1 (Üst Bant)")
+a_lf3  = input.int(50, minval=1, title="A: Length Fast MA #3", group="A: OBV #1 (Üst Bant)")
+a_ls3  = input.int(20, minval=1, title="A: Length Slow MA #3", group="A: OBV #1 (Üst Bant)")
+[a_o3, a_div3] = f_obvDiv(a_src3, a_lf3, a_ls3)
+a_div3_disp = f_normDisp(a_div3, a_obvNormLen)
+plot(a_div3_disp + offsetA, title="A: Div3",
+     color=dynC(a_div3_disp, a_c_div3_up, a_c_div3_down), linewidth=2, style=plot.style_line)
+
+// — A: Div4 —
+a_src4 = input.source(close, title="A: OBV Source #4", group="A: OBV #1 (Üst Bant)")
+a_lf4  = input.int(30, minval=1, title="A: Length Fast MA #4", group="A: OBV #1 (Üst Bant)")
+a_ls4  = input.int(12, minval=1, title="A: Length Slow MA #4", group="A: OBV #1 (Üst Bant)")
+[a_o4, a_div4] = f_obvDiv(a_src4, a_lf4, a_ls4)
+a_div4_disp = f_normDisp(a_div4, a_obvNormLen)
+plot(a_div4_disp + offsetA, title="A: Div4",
+     color=dynC(a_div4_disp, a_c_div4_up, a_c_div4_down), linewidth=2, style=plot.style_line)
+
+// — A: Div5 (Hızlı #2 — RED) —
+a_src5 = input.source(close, title="A: OBV Source #5", group="A: OBV #1 (Üst Bant)")
+a_lf5  = input.int(15, minval=1, title="A: Length Fast MA #5", group="A: OBV #1 (Üst Bant)")
+a_ls5  = input.int(5,  minval=1, title="A: Length Slow MA #5", group="A: OBV #1 (Üst Bant)")
+[a_o5, a_div5] = f_obvDiv(a_src5, a_lf5, a_ls5)
+a_div5_disp = f_normDisp(a_div5, a_obvNormLen)
+plot(a_div5_disp + offsetA, title="A: Div5 (Hızlı #2)",
+     color=dynC(a_div5_disp, a_c_div5_up, a_c_div5_down), linewidth=3, style=plot.style_line)
+
+// — A: Div6 (Hızlı #1 — BLUE) —
+a_src6 = input.source(close, title="A: OBV Source #6", group="A: OBV #1 (Üst Bant)")
+a_lf6  = input.int(8, minval=1, title="A: Length Fast MA #6", group="A: OBV #1 (Üst Bant)")
+a_ls6  = input.int(3, minval=1, title="A: Length Slow MA #6", group="A: OBV #1 (Üst Bant)")
+[a_o6, a_div6] = f_obvDiv(a_src6, a_lf6, a_ls6)
+a_div6_disp = f_normDisp(a_div6, a_obvNormLen)
+plot(a_div6_disp + offsetA, title="A: Div6 (Hızlı #1)",
+     color=dynC(a_div6_disp, a_c_div6_up, a_c_div6_down), linewidth=3, style=plot.style_line)
+
+// — A: Reverse Div'ler —
+a_lf1r = input.int(20,  minval=1, title="A: Reverse Fast MA #1 (20)",  group="A: OBV #1 (Üst Bant)")
+a_ls1r = input.int(100, minval=1, title="A: Reverse Slow MA #1 (100)", group="A: OBV #1 (Üst Bant)")
+a_div1r = f_revDiv(a_o1, a_lf1r, a_ls1r)
+plot(f_normDisp(a_div1r, a_obvNormLen) + offsetA, title="A: Reverse Div1",
+     color=dynCA(f_normDisp(a_div1r, a_obvNormLen), a_c_div1_up, a_c_div1_down, a_rev_transp), style=plot.style_line)
+
+a_lf2r = input.int(15, minval=1, title="A: Reverse Fast MA #2 (15)", group="A: OBV #1 (Üst Bant)")
+a_ls2r = input.int(70, minval=1, title="A: Reverse Slow MA #2 (70)", group="A: OBV #1 (Üst Bant)")
+a_div2r = f_revDiv(a_o2, a_lf2r, a_ls2r)
+plot(f_normDisp(a_div2r, a_obvNormLen) + offsetA, title="A: Reverse Div2",
+     color=dynCA(f_normDisp(a_div2r, a_obvNormLen), a_c_div2_up, a_c_div2_down, a_rev_transp), style=plot.style_line)
+
+a_lf3r = input.int(20, minval=1, title="A: Reverse Fast MA #3 (20)", group="A: OBV #1 (Üst Bant)")
+a_ls3r = input.int(50, minval=1, title="A: Reverse Slow MA #3 (50)", group="A: OBV #1 (Üst Bant)")
+a_div3r = f_revDiv(a_o3, a_lf3r, a_ls3r)
+plot(f_normDisp(a_div3r, a_obvNormLen) + offsetA, title="A: Reverse Div3",
+     color=dynCA(f_normDisp(a_div3r, a_obvNormLen), a_c_div3_up, a_c_div3_down, a_rev_transp), style=plot.style_line)
+
+a_lf4r = input.int(12, minval=1, title="A: Reverse Fast MA #4 (12)", group="A: OBV #1 (Üst Bant)")
+a_ls4r = input.int(30, minval=1, title="A: Reverse Slow MA #4 (30)", group="A: OBV #1 (Üst Bant)")
+a_div4r = f_revDiv(a_o4, a_lf4r, a_ls4r)
+plot(f_normDisp(a_div4r, a_obvNormLen) + offsetA, title="A: Reverse Div4",
+     color=dynCA(f_normDisp(a_div4r, a_obvNormLen), a_c_div4_up, a_c_div4_down, a_rev_transp), style=plot.style_line)
+
+a_lf5r = input.int(5,  minval=1, title="A: Reverse Fast MA #5 (5)",  group="A: OBV #1 (Üst Bant)")
+a_ls5r = input.int(15, minval=1, title="A: Reverse Slow MA #5 (15)", group="A: OBV #1 (Üst Bant)")
+a_div5r = f_revDiv(a_o5, a_lf5r, a_ls5r)
+plot(f_normDisp(a_div5r, a_obvNormLen) + offsetA, title="A: Reverse Div5",
+     color=dynCA(f_normDisp(a_div5r, a_obvNormLen), a_c_div5_up, a_c_div5_down, a_rev_transp), style=plot.style_line)
+
+a_lf6r = input.int(3, minval=1, title="A: Reverse Fast MA #6 (3)", group="A: OBV #1 (Üst Bant)")
+a_ls6r = input.int(8, minval=1, title="A: Reverse Slow MA #6 (8)", group="A: OBV #1 (Üst Bant)")
+a_div6r = f_revDiv(a_o6, a_lf6r, a_ls6r)
+plot(f_normDisp(a_div6r, a_obvNormLen) + offsetA, title="A: Reverse Div6",
+     color=dynCA(f_normDisp(a_div6r, a_obvNormLen), a_c_div6_up, a_c_div6_down, a_rev_transp), style=plot.style_line)
+
+// ════════════════════════════════════════════════════════════
+// BÖLÜM B — OBV #2 (ORTA BANT)
+// ════════════════════════════════════════════════════════════
+b_np  = input(20, title='B: Normalize', group="B: OBV #2 (Orta Bant)")
+b_tsp = input(9,  title='B: Trigger',   group="B: OBV #2 (Orta Bant)")
+b_h      = input(true,  title='B: Histogram',    group="B: OBV #2 (Orta Bant)")
+b_docol  = input(true,  title='B: Color Change', group="B: OBV #2 (Orta Bant)")
+b_obvNormLen = input.int(200, minval=10, title="B: Ham Diverjans Normalize Periyodu", group="B: OBV #2 (Orta Bant)")
+
+[b_obv_norm2, b_Trigger, b_Hist2] = f_obvMain(b_np, b_tsp)
+
+// — B: Temel çizgiler —
+plot((b_h ? b_Hist2 : na) * 100 + offsetB,
+     color     = dynC(b_Hist2, b_c_hist_up, b_c_hist_down),
+     style     = plot.style_line, linewidth=2, title='B: Hist')
+
+plot(b_obv_norm2 * 100 + offsetB,
+     color     = b_docol ? dynC(b_obv_norm2, b_c_norm_up, b_c_norm_down) : b_c_norm_down,
+     style     = plot.style_line, title='B: OBV Norm')
+
+
+plot(b_Trigger * 100 + offsetB,
+     color     = b_c_trigger,
+     style     = plot.style_line, title='B: Trigger')
+
+// — B: Div1 —
+b_src1 = input.source(close, title="B: OBV Source #1", group="B: OBV #2 (Orta Bant)")
+b_lf1  = input.int(100, minval=1, title="B: Length Fast MA #1", group="B: OBV #2 (Orta Bant)")
+b_ls1  = input.int(20,  minval=1, title="B: Length Slow MA #1", group="B: OBV #2 (Orta Bant)")
+[b_o1, b_div1] = f_obvDiv(b_src1, b_lf1, b_ls1)
+b_div1_disp = f_normDisp(b_div1, b_obvNormLen)
+plot(b_div1_disp + offsetB, title="B: Div1",
+     color=dynC(b_div1_disp, b_c_div1_up, b_c_div1_down), linewidth=2, style=plot.style_line)
+
+// — B: Div2 —
+b_src2 = input.source(close, title="B: OBV Source #2", group="B: OBV #2 (Orta Bant)")
+b_lf2  = input.int(70, minval=1, title="B: Length Fast MA #2", group="B: OBV #2 (Orta Bant)")
+b_ls2  = input.int(15, minval=1, title="B: Length Slow MA #2", group="B: OBV #2 (Orta Bant)")
+[b_o2, b_div2] = f_obvDiv(b_src2, b_lf2, b_ls2)
+b_div2_disp = f_normDisp(b_div2, b_obvNormLen)
+plot(b_div2_disp + offsetB, title="B: Div2",
+     color=dynC(b_div2_disp, b_c_div2_up, b_c_div2_down), linewidth=2, style=plot.style_line)
+
+// — B: Div3 —
+b_src3 = input.source(close, title="B: OBV Source #3", group="B: OBV #2 (Orta Bant)")
+b_lf3  = input.int(50, minval=1, title="B: Length Fast MA #3", group="B: OBV #2 (Orta Bant)")
+b_ls3  = input.int(20, minval=1, title="B: Length Slow MA #3", group="B: OBV #2 (Orta Bant)")
+[b_o3, b_div3] = f_obvDiv(b_src3, b_lf3, b_ls3)
+b_div3_disp = f_normDisp(b_div3, b_obvNormLen)
+plot(b_div3_disp + offsetB, title="B: Div3",
+     color=dynC(b_div3_disp, b_c_div3_up, b_c_div3_down), linewidth=2, style=plot.style_line)
+
+// — B: Div4 —
+b_src4 = input.source(close, title="B: OBV Source #4", group="B: OBV #2 (Orta Bant)")
+b_lf4  = input.int(30, minval=1, title="B: Length Fast MA #4", group="B: OBV #2 (Orta Bant)")
+b_ls4  = input.int(12, minval=1, title="B: Length Slow MA #4", group="B: OBV #2 (Orta Bant)")
+[b_o4, b_div4] = f_obvDiv(b_src4, b_lf4, b_ls4)
+b_div4_disp = f_normDisp(b_div4, b_obvNormLen)
+plot(b_div4_disp + offsetB, title="B: Div4",
+     color=dynC(b_div4_disp, b_c_div4_up, b_c_div4_down), linewidth=2, style=plot.style_line)
+
+// — B: Div5 (Hızlı #2 — RED) —
+b_src5 = input.source(close, title="B: OBV Source #5", group="B: OBV #2 (Orta Bant)")
+b_lf5  = input.int(15, minval=1, title="B: Length Fast MA #5", group="B: OBV #2 (Orta Bant)")
+b_ls5  = input.int(5,  minval=1, title="B: Length Slow MA #5", group="B: OBV #2 (Orta Bant)")
+[b_o5, b_div5] = f_obvDiv(b_src5, b_lf5, b_ls5)
+b_div5_disp = f_normDisp(b_div5, b_obvNormLen)
+plot(b_div5_disp + offsetB, title="B: Div5 (Hızlı #2)",
+     color=dynC(b_div5_disp, b_c_div5_up, b_c_div5_down), linewidth=3, style=plot.style_line)
+
+// — B: Div6 (Hızlı #1 — BLUE) —
+b_src6 = input.source(close, title="B: OBV Source #6", group="B: OBV #2 (Orta Bant)")
+b_lf6  = input.int(8, minval=1, title="B: Length Fast MA #6", group="B: OBV #2 (Orta Bant)")
+b_ls6  = input.int(3, minval=1, title="B: Length Slow MA #6", group="B: OBV #2 (Orta Bant)")
+[b_o6, b_div6] = f_obvDiv(b_src6, b_lf6, b_ls6)
+b_div6_disp = f_normDisp(b_div6, b_obvNormLen)
+plot(b_div6_disp + offsetB, title="B: Div6 (Hızlı #1)",
+     color=dynC(b_div6_disp, b_c_div6_up, b_c_div6_down), linewidth=3, style=plot.style_line)
+
+// — B: Reverse Div'ler —
+b_lf1r = input.int(20,  minval=1, title="B: Reverse Fast MA #1 (20)",  group="B: OBV #2 (Orta Bant)")
+b_ls1r = input.int(100, minval=1, title="B: Reverse Slow MA #1 (100)", group="B: OBV #2 (Orta Bant)")
+b_div1r = f_revDiv(b_o1, b_lf1r, b_ls1r)
+plot(f_normDisp(b_div1r, b_obvNormLen) + offsetB, title="B: Reverse Div1",
+     color=dynCA(f_normDisp(b_div1r, b_obvNormLen), b_c_div1_up, b_c_div1_down, b_rev_transp), style=plot.style_line)
+
+b_lf2r = input.int(15, minval=1, title="B: Reverse Fast MA #2 (15)", group="B: OBV #2 (Orta Bant)")
+b_ls2r = input.int(70, minval=1, title="B: Reverse Slow MA #2 (70)", group="B: OBV #2 (Orta Bant)")
+b_div2r = f_revDiv(b_o2, b_lf2r, b_ls2r)
+plot(f_normDisp(b_div2r, b_obvNormLen) + offsetB, title="B: Reverse Div2",
+     color=dynCA(f_normDisp(b_div2r, b_obvNormLen), b_c_div2_up, b_c_div2_down, b_rev_transp), style=plot.style_line)
+
+b_lf3r = input.int(20, minval=1, title="B: Reverse Fast MA #3 (20)", group="B: OBV #2 (Orta Bant)")
+b_ls3r = input.int(50, minval=1, title="B: Reverse Slow MA #3 (50)", group="B: OBV #2 (Orta Bant)")
+b_div3r = f_revDiv(b_o3, b_lf3r, b_ls3r)
+plot(f_normDisp(b_div3r, b_obvNormLen) + offsetB, title="B: Reverse Div3",
+     color=dynCA(f_normDisp(b_div3r, b_obvNormLen), b_c_div3_up, b_c_div3_down, b_rev_transp), style=plot.style_line)
+
+b_lf4r = input.int(12, minval=1, title="B: Reverse Fast MA #4 (12)", group="B: OBV #2 (Orta Bant)")
+b_ls4r = input.int(30, minval=1, title="B: Reverse Slow MA #4 (30)", group="B: OBV #2 (Orta Bant)")
+b_div4r = f_revDiv(b_o4, b_lf4r, b_ls4r)
+plot(f_normDisp(b_div4r, b_obvNormLen) + offsetB, title="B: Reverse Div4",
+     color=dynCA(f_normDisp(b_div4r, b_obvNormLen), b_c_div4_up, b_c_div4_down, b_rev_transp), style=plot.style_line)
+
+b_lf5r = input.int(5,  minval=1, title="B: Reverse Fast MA #5 (5)",  group="B: OBV #2 (Orta Bant)")
+b_ls5r = input.int(15, minval=1, title="B: Reverse Slow MA #5 (15)", group="B: OBV #2 (Orta Bant)")
+b_div5r = f_revDiv(b_o5, b_lf5r, b_ls5r)
+plot(f_normDisp(b_div5r, b_obvNormLen) + offsetB, title="B: Reverse Div5",
+     color=dynCA(f_normDisp(b_div5r, b_obvNormLen), b_c_div5_up, b_c_div5_down, b_rev_transp), style=plot.style_line)
+
+b_lf6r = input.int(3, minval=1, title="B: Reverse Fast MA #6 (3)", group="B: OBV #2 (Orta Bant)")
+b_ls6r = input.int(8, minval=1, title="B: Reverse Slow MA #6 (8)", group="B: OBV #2 (Orta Bant)")
+b_div6r = f_revDiv(b_o6, b_lf6r, b_ls6r)
+plot(f_normDisp(b_div6r, b_obvNormLen) + offsetB, title="B: Reverse Div6",
+     color=dynCA(f_normDisp(b_div6r, b_obvNormLen), b_c_div6_up, b_c_div6_down, b_rev_transp), style=plot.style_line)

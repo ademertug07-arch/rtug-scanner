@@ -1,0 +1,139 @@
+//@version=5
+indicator("RTUG Ultimate Scanner", overlay=true, format=format.price, precision=2)
+
+// ─── INPUT ────────────────────────────────────────────
+grp1  = "ANALYSIS"
+show_ema    = input.bool(true,  "Show EMAs", group=grp1)
+show_sr     = input.bool(true,  "Show S/R Levels", group=grp1)
+show_table  = input.bool(true,  "Show Dashboard", group=grp1)
+lookback    = input.int(100,    "Lookback Bars", group=grp1)
+
+grp2  = "THRESHOLDS"
+rsi_ob      = input.int(70,  "RSI Overbought", group=grp2)
+rpi_os      = input.int(30,  "RSI Oversold", group=grp2)
+vol_factor  = input.float(1.5,"Volume Spike Factor", group=grp2)
+
+grp3  = "COLORS"
+c_bull      = input.color(#00ff88, "Bullish", group=grp3)
+c_bear      = input.color(#ff4455, "Bearish", group=grp3)
+c_neutral   = input.color(#888899, "Neutral", group=grp3)
+c_sr        = input.color(#7f77dd, "S/R Lines", group=grp3)
+
+// ─── EMA HESAPLARI ────────────────────────────────────
+ema9   = ta.ema(close, 9)
+ema21  = ta.ema(close, 21)
+ema50  = ta.ema(close, 50)
+ema200 = ta.ema(close, 200)
+
+plot(show_ema ? ema9   : na, "EMA 9",   #00d4ff, 1)
+plot(show_ema ? ema21  : na, "EMA 21",  #7f77dd, 2)
+plot(show_ema ? ema50  : na, "EMA 50",  #ffaa44, 2)
+plot(show_ema ? ema200 : na, "EMA 200", #ff4455, 3)
+
+// ─── MOMENTUM ─────────────────────────────────────────
+rsi    = ta.rsi(close, 14)
+[macd_val, signal_val, macd_hist] = ta.macd(close, 12, 26, 9)
+macd_bull = macd_val > signal_val and macd_val > 0
+
+// ─── VOLUME ANALİZİ ───────────────────────────────────
+vol_ma  = ta.sma(volume, 20)
+vol_spike = volume > vol_ma * vol_factor
+obv     = ta.obv
+obv_ema = ta.ema(obv, 20)
+obv_bull = obv > obv_ema
+
+// ─── TREND YÖNÜ ───────────────────────────────────────
+trend_score = 0
+trend_score += close > ema9   ? 1 : -1
+trend_score += close > ema21  ? 1 : -1
+trend_score += close > ema50  ? 1 : -1
+trend_score += close > ema200 ? 2 : -2
+trend_score += ema9 > ema21   ? 1 : -1
+trend_score += ema21 > ema50  ? 1 : -1
+trend_score += ema50 > ema200 ? 1 : -1
+
+// ─── S/R SEVİYELERİ ───────────────────────────────────
+float sr_high = na
+float sr_low  = na
+highest_val = ta.highest(high, lookback)
+lowest_val  = ta.lowest(low, lookback)
+for i = 1 to lookback
+    if high[i] == highest_val
+        sr_high := high[i]
+    if low[i] == lowest_val
+        sr_low := low[i]
+
+pivot_high = ta.pivothigh(high, 10, 10)
+pivot_low  = ta.pivotlow(low, 10, 10)
+
+plotshape(show_sr and not na(pivot_high), style=shape.triangledown, location=location.abovebar, color=#ff4455, size=size.tiny, title="Resistance")
+plotshape(show_sr and not na(pivot_low),  style=shape.triangleup,   location=location.belowbar, color=#00ff88, size=size.tiny, title="Support")
+
+// ─── VERDICT ──────────────────────────────────────────
+string verdict = "NEUTRAL"
+float conviction = 0.0
+
+// Conviction hesapla (0-100)
+conviction := 50  // baz
+if rsi < rpi_os and rsi > 0
+    conviction += 15     // oversold bounce potansiyeli
+if rsi > rsi_ob
+    conviction -= 15     // overbought
+if macd_bull
+    conviction += 15     // MACD bullish
+if not macd_bull and macd_val < 0
+    conviction -= 10
+if obv_bull
+    conviction += 10     // OBV destekli
+if vol_spike
+    conviction += 5      // hacim patlaması
+if trend_score > 3
+    conviction += 15     // trend güçlü
+if trend_score < -3
+    conviction -= 15
+
+conviction := math.min(100, math.max(0, conviction))
+
+verdict := conviction >= 65 ? "BUY" : conviction <= 35 ? "SELL" : "NEUTRAL"
+
+// ─── ALARM ────────────────────────────────────────────
+alertcondition(conviction >= 65, "Buy Signal",  "BUY signal detected")
+alertcondition(conviction <= 35, "Sell Signal", "SELL signal detected")
+
+// ─── TABLO (DASHBOARD) ───────────────────────────────-
+var table dash = table.new(position.top_right, 2, 11, bgcolor=color.new(#0a0a1a, 30), border_color=#333355)
+if show_table and barstate.islast
+    vclr = verdict == "BUY" ? c_bull : verdict == "SELL" ? c_bear : c_neutral
+    table.cell(dash, 0, 0, syminfo.tickerid, text_color=#ffffff, text_size=size.normal, text_halign=text_align_center)
+    table.cell(dash, 1, 0, verdict,           text_color=vclr,    text_size=size.normal, text_halign=text_align_center)
+    table.cell(dash, 0, 1,  "RSI",     text_color=#8888bb, text_size=size.small)
+    table.cell(dash, 1, 1,  str.tostring(rsi, "#"),       text_color=rsi > rsi_ob ? c_bear : rsi < rpi_os ? c_bull : c_neutral, text_size=size.small)
+    table.cell(dash, 0, 2,  "MACD",    text_color=#8888bb, text_size=size.small)
+    table.cell(dash, 1, 2,  macd_bull ? "BULL" : "BEAR",  text_color=macd_bull ? c_bull : c_bear, text_size=size.small)
+    table.cell(dash, 0, 3,  "OBV",     text_color=#8888bb, text_size=size.small)
+    table.cell(dash, 1, 3,  obv_bull ? "BULL" : "BEAR",   text_color=obv_bull ? c_bull : c_bear, text_size=size.small)
+    table.cell(dash, 0, 4,  "Trend",   text_color=#8888bb, text_size=size.small)
+    table.cell(dash, 1, 4,  str.tostring(trend_score),    text_color=trend_score > 0 ? c_bull : c_bear, text_size=size.small)
+    table.cell(dash, 0, 5,  "Volume",  text_color=#8888bb, text_size=size.small)
+    table.cell(dash, 1, 5,  vol_spike ? "SPIKE" : "NORM", text_color=vol_spike ? #ffaa44 : c_neutral, text_size=size.small)
+    table.cell(dash, 0, 6,  "EMA9",    text_color=#8888bb, text_size=size.small)
+    table.cell(dash, 1, 6,  str.tostring(ema9, "#.##"),   text_color=close > ema9 ? c_bull : c_bear, text_size=size.small)
+    table.cell(dash, 0, 7,  "EMA21",   text_color=#8888bb, text_size=size.small)
+    table.cell(dash, 1, 7,  str.tostring(ema21, "#.##"),  text_color=close > ema21 ? c_bull : c_bear, text_size=size.small)
+    table.cell(dash, 0, 8,  "EMA50",   text_color=#8888bb, text_size=size.small)
+    table.cell(dash, 1, 8,  str.tostring(ema50, "#.##"),  text_color=close > ema50 ? c_bull : c_bear, text_size=size.small)
+    table.cell(dash, 0, 9,  "EMA200",  text_color=#8888bb, text_size=size.small)
+    table.cell(dash, 1, 9,  str.tostring(ema200, "#.##"), text_color=close > ema200 ? c_bull : c_bear, text_size=size.small)
+    table.cell(dash, 0, 10, "SCORE",   text_color=#8888bb, text_size=size.small)
+    table.cell(dash, 1, 10, str.tostring(conviction, "#")+"%", text_color=vclr, text_size=size.small)
+
+// ─── UYARI (Chart'ta yazı) ────────────────────────────
+var label verdict_label = na
+if barstate.islast
+    label.delete(verdict_label)
+    lbl_clr = switch verdict
+        "BUY"    => color.new(#00ff88, 60)
+        "SELL"   => color.new(#ff4455, 60)
+        => color.new(#888899, 60)
+    lbl_txt = verdict + " (" + str.tostring(conviction, "#") + "%)"
+    verdict_label := label.new(bar_index, low - (high-low) * 2, lbl_txt, color=lbl_clr, textcolor=color.white, style=label.style_label_center, size=size.huge)

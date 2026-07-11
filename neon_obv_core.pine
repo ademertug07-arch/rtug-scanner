@@ -1,0 +1,111 @@
+//@version=5
+library("neon_obv_core")
+
+export dynC(v, u, d) => v > v[1] ? u : d
+export dynCA(v, u, d, t) => v > v[1] ? color.new(u, t) : color.new(d, t)
+
+export len_main   = input.int(20, "Main Period")
+export c_main_up  = input.color(color.rgb(0, 180, 255), "Up", group="MAIN")
+export c_main_down= input.color(color.rgb(0, 255, 240), "Down", group="MAIN")
+export c_main_core= input.color(color.rgb(255, 255, 255), "Core", group="MAIN")
+export main_width = input.int(4, "Width", group="MAIN")
+export main_glow_w= input.int(9, "Glow W", group="MAIN")
+export main_glow_t= input.int(82, "Glow T", group="MAIN")
+
+export len_fast1 = input.int(100, "Fast #1", group="#1")
+export len_slow1 = input.int(20, "Slow #1", group="#1")
+export c_d1_up   = input.color(color.rgb(170, 0, 255), "Up", group="#1")
+export c_d1_down = input.color(color.rgb(255, 0, 170), "Down", group="#1")
+export c_d1_core = input.color(color.rgb(255, 255, 255), "Core", group="#1")
+export d1_width  = input.int(4, "Width", group="#1")
+export d1_glow_w = input.int(9, "Glow W", group="#1")
+export d1_glow_t = input.int(82, "Glow T", group="#1")
+
+export len_fast2 = input.int(70, "Fast #2", group="#2")
+export len_slow2 = input.int(15, "Slow #2", group="#2")
+export c_d2_up   = input.color(color.rgb(255, 60, 60), "Up", group="#2")
+export c_d2_down = input.color(color.rgb(255, 140, 0), "Down", group="#2")
+export c_d2_core = input.color(color.rgb(255, 255, 255), "Core", group="#2")
+export d2_width  = input.int(4, "Width", group="#2")
+export d2_glow_w = input.int(9, "Glow W", group="#2")
+export d2_glow_t = input.int(82, "Glow T", group="#2")
+
+export len_fast3 = input.int(50, "Fast #3", group="#3")
+export len_slow3 = input.int(20, "Slow #3", group="#3")
+export c_d3_up   = input.color(color.rgb(0, 255, 120), "Up", group="#3")
+export c_d3_down = input.color(color.rgb(180, 255, 0), "Down", group="#3")
+export c_d3_core = input.color(color.rgb(255, 255, 255), "Core", group="#3")
+export d3_width  = input.int(4, "Width", group="#3")
+export d3_glow_w = input.int(9, "Glow W", group="#3")
+export d3_glow_t = input.int(82, "Glow T", group="#3")
+
+export len_fast5 = input.int(15, "Fast #5", group="#5")
+export len_slow5 = input.int(5, "Slow #5", group="#5")
+export c_d5_up   = input.color(color.rgb(255, 0, 170), "Up", group="#5")
+export c_d5_down = input.color(color.rgb(170, 0, 255), "Down", group="#5")
+export c_d5_core = input.color(color.rgb(255, 255, 255), "Core", group="#5")
+export d5_width  = input.int(4, "Width", group="#5")
+export d5_glow_w = input.int(9, "Glow W", group="#5")
+export d5_glow_t = input.int(82, "Glow T", group="#5")
+
+export len_fast6 = input.int(8, "Fast #6", group="#6")
+export len_slow6 = input.int(3, "Slow #6", group="#6")
+export c_d6_up   = input.color(color.rgb(0, 200, 200), "Up", group="#6")
+export c_d6_down = input.color(color.rgb(200, 100, 0), "Down", group="#6")
+export c_d6_core = input.color(color.rgb(255, 255, 255), "Core", group="#6")
+export d6_width  = input.int(4, "Width", group="#6")
+export d6_glow_w = input.int(9, "Glow W", group="#6")
+export d6_glow_t = input.int(82, "Glow T", group="#6")
+
+export c_bull_bg = input.color(color.rgb(170, 0, 255), "Bull", group="BG")
+export c_bear_bg = input.color(color.rgb(255, 60, 60), "Bear", group="BG")
+export bt = input.int(90, "Bull T", group="BG")
+export et = input.int(92, "Bear T", group="BG")
+
+export len_fast1_rev = input.int(20, "Fast Rev #1", group="REV #1")
+export len_slow1_rev = input.int(100, "Slow Rev #1", group="REV #1")
+export len_fast2_rev = input.int(15, "Fast Rev #2", group="REV #2")
+export len_slow2_rev = input.int(70, "Slow Rev #2", group="REV #2")
+export len_fast3_rev = input.int(20, "Fast Rev #3", group="REV #3")
+export len_slow3_rev = input.int(50, "Slow Rev #3", group="REV #3")
+export len_fast5_rev = input.int(5, "Fast Rev #5", group="REV #5")
+export len_slow5_rev = input.int(15, "Slow Rev #5", group="REV #5")
+export len_fast6_rev = input.int(3, "Fast Rev #6", group="REV #6")
+export len_slow6_rev = input.int(8, "Slow Rev #6", group="REV #6")
+
+export ch = ta.change(close)
+export obv1 = ta.cum(ch > 0 ? volume : ch < 0 ? -volume : 0)
+export obv_n = (obv1 - ta.lowest(obv1, len_main)) / (ta.highest(obv1, len_main) - ta.lowest(obv1, len_main) + 1e-9) * 2 - 1
+export dg = len_main < 2 ? obv1 : obv_n
+
+export fast1 = ta.rma(obv1, len_fast1)
+export slow1 = ta.rma(obv1, len_slow1)
+export div1  = fast1 - slow1
+export fast2 = ta.rma(obv1, len_fast2)
+export slow2 = ta.rma(obv1, len_slow2)
+export div2  = fast2 - slow2
+export fast3 = ta.rma(obv1, len_fast3)
+export slow3 = ta.rma(obv1, len_slow3)
+export div3  = fast3 - slow3
+export fast5 = ta.rma(obv1, len_fast5)
+export slow5 = ta.rma(obv1, len_slow5)
+export div5  = fast5 - slow5
+export fast6 = ta.rma(obv1, len_fast6)
+export slow6 = ta.rma(obv1, len_slow6)
+export div6  = fast6 - slow6
+
+export fast1_rev = ta.rma(obv1, len_fast1_rev)
+export slow1_rev = ta.rma(obv1, len_slow1_rev)
+export div1_rev  = fast1_rev - slow1_rev
+export fast2_rev = ta.rma(obv1, len_fast2_rev)
+export slow2_rev = ta.rma(obv1, len_slow2_rev)
+export div2_rev  = fast2_rev - slow2_rev
+export fast3_rev = ta.rma(obv1, len_fast3_rev)
+export slow3_rev = ta.rma(obv1, len_slow3_rev)
+export div3_rev  = fast3_rev - slow3_rev
+export fast5_rev = ta.rma(obv1, len_fast5_rev)
+export slow5_rev = ta.rma(obv1, len_slow5_rev)
+export div5_rev  = fast5_rev - slow5_rev
+export fast6_rev = ta.rma(obv1, len_fast6_rev)
+export slow6_rev = ta.rma(obv1, len_slow6_rev)
+export div6_rev  = fast6_rev - slow6_rev

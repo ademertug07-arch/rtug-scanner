@@ -1,0 +1,8 @@
+//@version=5
+library("neon")
+
+// ═══════════════════════════════════════════════════════════
+// 🖌️ DİNAMİK RENK FONKSİYONLARI (export)
+// ═══════════════════════════════════════════════════════════
+export clr(val, cu, cd)     => val > val[1] ? cu : cd
+export clrA(val, cu, cd, t) => val > val[1] ? color.new(cu, t) : color.new(cd, t)
