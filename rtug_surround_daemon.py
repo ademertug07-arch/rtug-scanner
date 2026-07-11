@@ -48,44 +48,51 @@ logger = logging.getLogger("rtug-daemon")
 # ─── DURUM DOSYASI (daha once bildirilen pattern'leri kaydet) ──
 STATUS_FILE = Path(__file__).parent / ".surround_status.json"
 
-# ─── SEMBOL LISTELERI ────────────────────────────────────
-# BIST 610+ hisse (bist_symbols.py'den import)
-from bist_symbols import BIST_SYMBOLS as BIST_SYMBOLS_RAW
-BIST_SYMBOLS = [f"{s}.IS" for s in BIST_SYMBOLS_RAW]
+# ─── SEMBOL LISTELERI (rtug_symbols.py master DB'den) ────
+from rtug_symbols import BIST_SYMBOLS, SP500_SYMBOLS
 
-US_SYMBOLS = [
-    "AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA",
-    "JPM", "V", "JNJ", "WMT", "PG", "MA", "UNH", "HD",
-    "BAC", "DIS", "ADBE", "CRM", "NFLX", "PYPL", "INTC",
-    "AMD", "QCOM", "CSCO", "IBM", "ORCL", "UBER", "COIN",
-    "MSTR", "PLTR", "SNOW", "DASH", "HOOD",
-]
+# BIST: 588 hisse (rtug_symbols.py master DB)
+# Eski: bist_symbols.py'den 572 hisse  + f"{s}.IS" ile ekleme
+# Yeni: dogrudan .IS suffix'li 588 hisse (import edildi)
 
-CRYPTO_SYMBOLS = [
-    # Tier 1 - Top 20 (en yuksek hacim)
-    "BTC/USDT", "ETH/USDT", "BNB/USDT", "SOL/USDT", "XRP/USDT",
-    "ADA/USDT", "DOGE/USDT", "AVAX/USDT", "DOT/USDT", "LINK/USDT",
-    "MATIC/USDT", "UNI/USDT", "SHIB/USDT", "LTC/USDT", "BCH/USDT",
-    "ATOM/USDT", "ETC/USDT", "XLM/USDT", "NEAR/USDT", "APT/USDT",
-    # Tier 2 - Populer altcoinler
-    "ARB/USDT", "OP/USDT", "SUI/USDT", "PEPE/USDT", "INJ/USDT",
-    "TIA/USDT", "SEI/USDT", "STRK/USDT", "FIL/USDT", "FTM/USDT",
-    "ALGO/USDT", "AAVE/USDT", "AXS/USDT", "SAND/USDT", "MANA/USDT",
-    "THETA/USDT", "ICP/USDT", "FET/USDT", "GRT/USDT", "RUNE/USDT",
-    "EGLD/USDT", "FLOW/USDT", "EOS/USDT", "TRX/USDT", "VET/USDT",
-    "HBAR/USDT", "KAS/USDT", "RNDR/USDT", "MKR/USDT", "COMP/USDT",
-    "CRV/USDT", "BAL/USDT", "YFI/USDT", "SUSHI/USDT", "SNX/USDT",
-    "DYDX/USDT", "GALA/USDT", "ENJ/USDT", "CHZ/USDT", "WOO/USDT",
-    "GNO/USDT", "ZEC/USDT", "DASH/USDT", "XTZ/USDT", "ZIL/USDT",
-    "WAVES/USDT", "IOTA/USDT", "NEO/USDT", "ONT/USDT", "QTUM/USDT",
-    # Tier 3 - Yeni nesil
-    "WLD/USDT", "BLUR/USDT", "PYTH/USDT", "JUP/USDT", "JTO/USDT",
-    "TNSR/USDT", "WIF/USDT", "BONK/USDT", "DOGS/USDT", "NOT/USDT",
-    "PIXEL/USDT", "PORTAL/USDT", "AEVO/USDT", "ETHFI/USDT", "ENA/USDT",
-    "OMNI/USDT", "REZ/USDT", "BB/USDT", "LISTA/USDT", "IO/USDT",
-    "ZRO/USDT", "BLAST/USDT", "ZK/USDT", "TON/USDT", "TAO/USDT",
-    "BEAM/USDT", "ONDO/USDT", "AKT/USDT", "PENDLE/USDT", "ALT/USDT",
-]
+# ABD: SP500 ~503 hisse (rtug_symbols.py master DB)
+# Eski: manuel 34 hisse  →  Yeni: SP500 503 hisse
+US_SYMBOLS = SP500_SYMBOLS
+
+# Kripto: once canli Binance listesi, olmazsa yedek statik liste
+try:
+    from rtug_symbols import get_all_crypto_symbols as _fetch_crypto
+    _crypto_list = _fetch_crypto()
+    CRYPTO_SYMBOLS = _crypto_list if _crypto_list else None
+except Exception:
+    CRYPTO_SYMBOLS = None
+
+if not CRYPTO_SYMBOLS:
+    logger.warning("⚠️ Canli kripto listesi alinamadi, 105 coin'lik yedek liste kullaniliyor.")
+    CRYPTO_SYMBOLS = [
+        "BTC/USDT", "ETH/USDT", "BNB/USDT", "SOL/USDT", "XRP/USDT",
+        "ADA/USDT", "DOGE/USDT", "AVAX/USDT", "DOT/USDT", "LINK/USDT",
+        "MATIC/USDT", "UNI/USDT", "SHIB/USDT", "LTC/USDT", "BCH/USDT",
+        "ATOM/USDT", "ETC/USDT", "XLM/USDT", "NEAR/USDT", "APT/USDT",
+        "ARB/USDT", "OP/USDT", "SUI/USDT", "PEPE/USDT", "INJ/USDT",
+        "TIA/USDT", "SEI/USDT", "STRK/USDT", "FIL/USDT", "FTM/USDT",
+        "ALGO/USDT", "AAVE/USDT", "AXS/USDT", "SAND/USDT", "MANA/USDT",
+        "THETA/USDT", "ICP/USDT", "FET/USDT", "GRT/USDT", "RUNE/USDT",
+        "EGLD/USDT", "FLOW/USDT", "EOS/USDT", "TRX/USDT", "VET/USDT",
+        "HBAR/USDT", "KAS/USDT", "RNDR/USDT", "MKR/USDT", "COMP/USDT",
+        "CRV/USDT", "BAL/USDT", "YFI/USDT", "SUSHI/USDT", "SNX/USDT",
+        "DYDX/USDT", "GALA/USDT", "ENJ/USDT", "CHZ/USDT", "WOO/USDT",
+        "GNO/USDT", "ZEC/USDT", "DASH/USDT", "XTZ/USDT", "ZIL/USDT",
+        "WAVES/USDT", "IOTA/USDT", "NEO/USDT", "ONT/USDT", "QTUM/USDT",
+        "WLD/USDT", "BLUR/USDT", "PYTH/USDT", "JUP/USDT", "JTO/USDT",
+        "TNSR/USDT", "WIF/USDT", "BONK/USDT", "DOGS/USDT", "NOT/USDT",
+        "PIXEL/USDT", "PORTAL/USDT", "AEVO/USDT", "ETHFI/USDT", "ENA/USDT",
+        "OMNI/USDT", "REZ/USDT", "BB/USDT", "LISTA/USDT", "IO/USDT",
+        "ZRO/USDT", "BLAST/USDT", "ZK/USDT", "TON/USDT", "TAO/USDT",
+        "BEAM/USDT", "ONDO/USDT", "AKT/USDT", "PENDLE/USDT", "ALT/USDT",
+    ]
+else:
+    logger.info(f"✅ Kripto sembolleri canli cekildi: {len(CRYPTO_SYMBOLS)} coin")
 
 # ─── DURUM YONETIMI ─────────────────────────────────────
 
