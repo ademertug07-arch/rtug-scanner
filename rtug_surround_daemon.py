@@ -282,6 +282,9 @@ def format_alert_message(signals: List[SignalResult], market_name: str) -> str:
         BreakoutType.DEEP_BEAR_SUR: "DR",
         BreakoutType.REV_CIRCLE_BULL: "CB",
         BreakoutType.REV_CIRCLE_BEAR: "CR",
+        # 🔥 Triple Agreement
+        BreakoutType.TRIPLE_BULL: "3B",
+        BreakoutType.TRIPLE_BEAR: "3R",
     }
     
     lines = [

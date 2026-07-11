@@ -37,6 +37,9 @@ class BreakoutType:
     DEEP_BEAR_SUR      = "DEEP_BEARISH_SURROUND"    # 4/5 bearish surround
     REV_CIRCLE_BULL    = "REVERSE_CIRCLE_BULLISH"   # Reverse daireler boğa
     REV_CIRCLE_BEAR    = "REVERSE_CIRCLE_BEARISH"   # Reverse daireler ayı
+    # 🔥 YENI: Triple Agreement (Uclu Uyum Pattern'leri)
+    TRIPLE_BULL        = "TRIPLE_BULLISH"           # Div1+Div2+Div6 hepsi pozitif (Mor+Kirmizi+Mavi)
+    TRIPLE_BEAR        = "TRIPLE_BEARISH"           # Div1+Div2+Div6 hepsi negatif (Pembe+Turuncu+Kahve)
 
 
 class SignalResult(NamedTuple):
@@ -320,7 +323,20 @@ class RTUGSignalEngine:
                 surround_strength = 3
                 has_surround = True
         
-        # --- PATTERN 4: Reverse Circle Surround ---
+        # --- PATTERN 4: Triple Agreement (Uclu Uyum) ---
+        # Div1+Div2+Div6 hepsi ayni yonde (kisa/orta/uzun trend uyumu)
+        # NOT: Bu, Reverse Circle'dan ONCE kontrol edilir cunku daha spesifik
+        if not has_surround:
+            if d1_bull and d2_bull and d6_bull:  # Mor+Kirmizi+Mavi hepsi UP
+                surround_type = BreakoutType.TRIPLE_BULL
+                surround_strength = 3
+                has_surround = True
+            elif d1_bear and d2_bear and d6_bear:  # Pembe+Turuncu+Kahve hepsi DN
+                surround_type = BreakoutType.TRIPLE_BEAR
+                surround_strength = 3
+                has_surround = True
+        
+        # --- PATTERN 5: Reverse Circle Surround ---
         if not has_surround:
             rev_diff = rev_bull_count - bull_count
             if rev_diff >= 3:  # Reverse daireler çizgilerden çok daha boğa
@@ -369,6 +385,9 @@ class RTUGSignalEngine:
             BreakoutType.DEEP_BEAR_SUR: "DERIN AYI",
             BreakoutType.REV_CIRCLE_BULL: "TERS DAIRE BOGA",
             BreakoutType.REV_CIRCLE_BEAR: "TERS DAIRE AYI",
+            # 🔥 Triple Agreement
+            BreakoutType.TRIPLE_BULL: "UCLU BOGA [Mor+Kirmizi+Mavi UP]",
+            BreakoutType.TRIPLE_BEAR: "UCLU AYI [Pembe+Turuncu+Kahve DN]",
         }
         
         return SignalResult(
