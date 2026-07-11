@@ -40,6 +40,9 @@ class BreakoutType:
     # 🔥 YENI: Triple Agreement (Uclu Uyum Pattern'leri)
     TRIPLE_BULL        = "TRIPLE_BULLISH"           # Div1+Div2+Div6 hepsi pozitif (Mor+Kirmizi+Mavi)
     TRIPLE_BEAR        = "TRIPLE_BEARISH"           # Div1+Div2+Div6 hepsi negatif (Pembe+Turuncu+Kahve)
+    # ⚡ YENI: Box Breakout (Kutu Konsolidasyon + Ani Patlama)
+    BOX_BREAKOUT_BULL  = "BOX_BREAKOUT_BULLISH"     # Kutu icinde sıkışma → ani yukselis
+    BOX_BREAKOUT_BEAR  = "BOX_BREAKOUT_BEARISH"     # Kutu icinde sıkışma → ani dusus
 
 
 class SignalResult(NamedTuple):
@@ -356,6 +359,57 @@ class RTUGSignalEngine:
             if surround_strength >= 3:
                 breakout = surround_type
         
+        # ═════════════════════════════════════════════════════
+        # ⚡ BOX BREAKOUT DETECTION (Kutu Patlamasi) — En yüksek öncelik
+        # ═════════════════════════════════════════════════════
+        # Pattern: Fiyat once bir bantta sıkışır (konsolidasyon),
+        # ardindan ani bir blok/bar yukselisi veya dususu yapar.
+        # DGNMO Nisan 2026: 4.00-5.00 box -> 12.00 patlama.
+        # Multi-bar breakout tespiti: 40 bar icinde en dar 20 barlik pencere
+        # ve son 5 barda bu kutudan cikis.
+        if len(close) >= 60:
+            search_window = min(60, len(close))
+            prices = close[-search_window:]
+            best_box_range = float('inf')
+            best_box_high = 0; best_box_low = 0
+            best_box_idx = 0
+            
+            # 20 barlik kayan pencere ile en dar konsolidasyon bul
+            for j in range(0, search_window - 20):
+                chunk = prices[j:j+20]
+                ch = np.max(chunk); cl = np.min(chunk)
+                ca = np.mean(chunk)
+                cr = (ch - cl) / ca if ca > 0 else 1
+                if cr < best_box_range:
+                    best_box_range = cr
+                    best_box_high = ch; best_box_low = cl
+                    best_box_idx = j
+            
+            box_breakout_pct = (close[-1] - best_box_high) / (best_box_high if best_box_high > 0 else 1) * 100
+            box_breakdown_pct = (close[-1] - best_box_low) / (best_box_low if best_box_low > 0 else 1) * 100
+            
+            # Son 5 barda ortalama bar boyu (trend guclu)
+            bodies = np.abs(np.diff(close[-6:]))
+            avg_body = np.mean(bodies[:-1]) if len(bodies) > 1 else bodies[0]
+            
+            # Volume trend (son 5 bar / onceki 15 bar)
+            vol_recent = np.mean(volume[-5:])
+            vol_prior  = np.mean(volume[-20:-5])
+            vol_ratio = vol_recent / vol_prior if vol_prior > 0 else 1
+            
+            # Box: < %15 range, breakout: +%10 uzeri fark + artan volume
+            is_tight_box = best_box_range < 0.15
+            is_breaking_up = box_breakout_pct > 10.0 and vol_ratio > 1.2 and avg_body > 0
+            is_breaking_dn = box_breakdown_pct < -10.0 and vol_ratio > 1.2 and avg_body > 0
+            
+            if is_tight_box:
+                if is_breaking_up and bull_count >= 2:
+                    breakout = BreakoutType.BOX_BREAKOUT_BULL
+                    has_surround = False
+                elif is_breaking_dn and bear_count >= 2:
+                    breakout = BreakoutType.BOX_BREAKOUT_BEAR
+                    has_surround = False
+        
         # Conviction score (0-100) — Pine Script'teki Ultimate Scanner mantığı
         score = 50.0
         score += bull_count * 8
@@ -388,6 +442,9 @@ class RTUGSignalEngine:
             # 🔥 Triple Agreement
             BreakoutType.TRIPLE_BULL: "UCLU BOGA [Mor+Kirmizi+Mavi UP]",
             BreakoutType.TRIPLE_BEAR: "UCLU AYI [Pembe+Turuncu+Kahve DN]",
+            # ⚡ Box Breakout
+            BreakoutType.BOX_BREAKOUT_BULL: "KUTU PATLAMASI BOGA [Box+konsolidasyon+break]",
+            BreakoutType.BOX_BREAKOUT_BEAR: "KUTU PATLAMASI AYI [Box+konsolidasyon+break]",
         }
         
         return SignalResult(
