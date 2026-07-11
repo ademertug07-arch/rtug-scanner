@@ -49,21 +49,9 @@ logger = logging.getLogger("rtug-daemon")
 STATUS_FILE = Path(__file__).parent / ".surround_status.json"
 
 # ─── SEMBOL LISTELERI ────────────────────────────────────
-
-BIST_SYMBOLS = [
-    "AKBNK.IS", "ARCLK.IS", "ASELS.IS", "BIMAS.IS", "EKGYO.IS",
-    "EREGL.IS", "FROTO.IS", "GARAN.IS", "GUBRF.IS", "HALKB.IS",
-    "ISCTR.IS", "KCHOL.IS", "KRDMD.IS", "MAVI.IS", "MPARK.IS",
-    "OYAKC.IS", "PETKM.IS", "PGSUS.IS", "SAHOL.IS", "SASA.IS",
-    "SISE.IS", "TAVHL.IS", "TCELL.IS", "THYAO.IS", "TOASO.IS",
-    "TUPRS.IS", "VAKBN.IS", "YKBNK.IS", "ALBRK.IS", "ALGYO.IS",
-    "ALARK.IS", "AEFES.IS", "ANSGR.IS", "BERA.IS", "BRISA.IS",
-    "CCOLA.IS", "CIMSA.IS", "DOHOL.IS", "ECZYT.IS", "ENJSA.IS",
-    "ENKAI.IS", "GOLTS.IS", "GSDHO.IS", "HURGZ.IS", "ICBCT.IS",
-    "ISGYO.IS", "KONTR.IS", "KRVGD.IS", "MGROS.IS", "ODINE.IS",
-    "OTKAR.IS", "POLHO.IS", "SOKM.IS", "TABGD.IS", "TKFEN.IS",
-    "TTKOM.IS", "TTRAK.IS", "ULKER.IS", "VESTL.IS", "ZOREN.IS",
-]
+# BIST 610+ hisse (bist_symbols.py'den import)
+from bist_symbols import BIST_SYMBOLS as BIST_SYMBOLS_RAW
+BIST_SYMBOLS = [f"{s}.IS" for s in BIST_SYMBOLS_RAW]
 
 US_SYMBOLS = [
     "AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA",
@@ -182,7 +170,7 @@ class DataProvider:
         """Yahoo Finance'den hisse verilerini indir."""
         import yfinance as yf
         results = {}
-        batch_size = 10
+        batch_size = 30  # 572 hisse icin ~19 batch
         
         for i in range(0, len(symbols), batch_size):
             batch = symbols[i:i+batch_size]

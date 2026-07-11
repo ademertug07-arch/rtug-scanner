@@ -34,23 +34,9 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger("rtug-scanner")
 
 # ─── Sembol Listeleri ────────────────────────────────────
-
-# BIST 100 (Türkiye) — En likit hisseler
-BIST_SYMBOLS = [
-    "AKBNK.IS", "ARCLK.IS", "ASELS.IS", "BIMAS.IS", "EKGYO.IS",
-    "EREGL.IS", "FROTO.IS", "GARAN.IS", "GUBRF.IS", "HALKB.IS",
-    "ISCTR.IS", "KCHOL.IS", "KRDMD.IS",
-    "MAVI.IS", "MPARK.IS", "OYAKC.IS", "PETKM.IS", "PGSUS.IS",
-    "SAHOL.IS", "SASA.IS", "SISE.IS", "TAVHL.IS", "TCELL.IS",
-    "THYAO.IS", "TOASO.IS", "TUPRS.IS", "VAKBN.IS", "YKBNK.IS",
-    "ALBRK.IS", "ALGYO.IS", "ALARK.IS", "AEFES.IS", "ANSGR.IS",
-    "BERA.IS", "BRISA.IS", "CCOLA.IS", "CIMSA.IS", "DOHOL.IS",
-    "ECZYT.IS", "ENJSA.IS", "ENKAI.IS", "GOLTS.IS", "GSDHO.IS",
-    "HURGZ.IS", "ICBCT.IS", "ISGYO.IS", "KONTR.IS",
-    "KRVGD.IS", "MGROS.IS", "ODINE.IS", "OTKAR.IS", "POLHO.IS",
-    "SOKM.IS", "TABGD.IS", "TKFEN.IS", "TTKOM.IS", "TTRAK.IS",
-    "ULKER.IS", "VESTL.IS", "ZOREN.IS",
-]
+# BIST 610+ hisse (bist_symbols.py'den import)
+from bist_symbols import BIST_SYMBOLS as BIST_SYMBOLS_RAW
+BIST_SYMBOLS = [f"{s}.IS" for s in BIST_SYMBOLS_RAW]
 
 # ABD Hisse Senetleri (büyükler)
 US_SYMBOLS = [
@@ -86,8 +72,8 @@ class DataProvider:
         
         results = {}
         try:
-            # Tek seferde değil, 10'ar gruplar halinde indir (daha kararlı)
-            batch_size = 10
+            # 30'ar gruplar halinde indir (572 hisse icin ~19 batch)
+            batch_size = 30
             all_data = {}
             
             for i in range(0, len(symbols), batch_size):
