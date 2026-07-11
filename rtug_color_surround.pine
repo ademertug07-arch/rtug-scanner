@@ -183,21 +183,99 @@ deep_bull = div_directions >= 4 and (div2 < 0 or div5 < 0)  // 4/5 bullish, 1 ta
 deep_bear = div_directions <= 1 and (div2 > 0 or div5 > 0)  // 4/5 bearish, 1 tane bullish "surround"
 
 // ============================================================
+// 🔥 PATTERN 6: ÜÇLÜ UYUM (Triple Agreement — Div1+Div2+Div6)
+// ============================================================
+// Mor+Kirp+Mavi = 3B (hepsi UP)
+// Pembe+Turuncu+Kahve = 3R (hepsi DOWN)
+// ============================================================
+triple_bull = d1_bull and d2_bull and d6_bull
+triple_bear = d1_bear and d2_bear and d6_bear
+
+// ============================================================
+// ⚡ PATTERN 7: BOX BREAKOUT (Kutu Patlaması)
+// ============================================================
+// Fiyatın dar bantta sıkışması (konsolidasyon) ve ardından ani patlama
+// Pine'da bar cesedi + hacim + dar aralik tespiti
+// ============================================================
+// Box: son 20 barda < %15 fiyat araligi
+box_high = ta.highest(close, 20)
+box_low = ta.lowest(close, 20)
+box_range = (box_high - box_low) / box_low
+is_box = box_range < 0.15
+
+// Ani patlama: son bar body'si onceki 5 bar ortalamasinin 2 katindan buyuk
+avg_body = ta.sma(math.abs(close - close[1]), 5)
+body_ratio = math.abs(close - close[1]) / avg_body
+vol_avg = ta.sma(volume, 10)
+vol_spike = volume > vol_avg * 1.5
+
+// Box icinde sıkışma + patlama
+box_breakout_up = is_box and body_ratio > 2.0 and vol_spike and close > close[1] and (d1_bull or d2_bull or d6_bull)
+box_breakout_dn = is_box and body_ratio > 2.0 and vol_spike and close < close[1] and (d1_bear or d2_bear or d6_bear)
+
+// ============================================================
 // 🎯 NİHAİ SİNYAL KARARI
 // ============================================================
 var signal_type = ""
 var signal_strength = 0
 
-// Sinyal tipini belirle
-if bull_surround_1 or bull_surround_2 or bull_surround_3 or bull_surround_4 or reverse_bull or deep_bull
+// Öncelik sırası: BOX > TRIPLE > REVERSE > DEEP > SURROUND
+if box_breakout_up
+    signal_type := "BOX_BREAKOUT_BULL"
+    signal_strength := 5
+else if box_breakout_dn
+    signal_type := "BOX_BREAKOUT_BEAR"
+    signal_strength := 5
+else if triple_bull
+    signal_type := "TRIPLE_BULLISH"
+    signal_strength := 4
+else if triple_bear
+    signal_type := "TRIPLE_BEARISH"
+    signal_strength := 4
+else if bull_surround_1 or bull_surround_2 or bull_surround_3 or bull_surround_4 or reverse_bull or deep_bull
     signal_type := "BULLISH_SURROUND"
     signal_strength := (bull_surround_4 ? 1 : 0) + (bull_surround_3 ? 2 : 0) + (reverse_bull ? 2 : 0) + (deep_bull ? 2 : 0) + 1
     signal_strength := math.min(signal_strength, 5)
-
-if bear_surround_1 or bear_surround_2 or bear_surround_3 or bear_surround_4 or reverse_bear or deep_bear
+else if bear_surround_1 or bear_surround_2 or bear_surround_3 or bear_surround_4 or reverse_bear or deep_bear
     signal_type := "BEARISH_SURROUND"
     signal_strength := (bear_surround_4 ? 1 : 0) + (bear_surround_3 ? 2 : 0) + (reverse_bear ? 2 : 0) + (deep_bear ? 2 : 0) + 1
     signal_strength := math.min(signal_strength, 5)
+
+// ═══════════════════════════════════════════════════════════
+// 📡 REAL-TIME WEBHOOK ALERT (alert() ile anında bildirim)
+// ═══════════════════════════════════════════════════════════
+// Bu alert'ler TradingView'de Webhook URL ayarlanirsa aninda Telegram'a düşer.
+// TradingView → Alert (herhangi bir kondisyon) → Webhook URL
+// NOT: alert() her bar kapanışında tetiklenir, alertcondition() manuel kurulum gerektirir.
+
+make_alert_msg(_type, _strength) =>
+    string _d1_dir = div1 > 0 ? "MOR_UP" : "PEMBE_DN"
+    string _d2_dir = div2 > 0 ? "KIRMIZI_UP" : "TURUNCU_DN"
+    string _d6_dir = div6 > 0 ? "MAVI_UP" : "KAHVE_DN"
+    string _d5_dir = div5 > 0 ? "PEMBE_UP" : "MOR_DN"
+    string _d3_dir = div3 > 0 ? "YESIL_UP" : "SARI_DN"
+    
+    "{\"ticker\":\"{{ticker}}\",\"exchange\":\"{{exchange}}\",\"close\":\"" + str.tostring(close) + "\",\"time\":\"{{timenow}}\","
+    + "\"type\":\"" + _type + "\","
+    + "\"strength\":\"" + str.tostring(_strength) + "\","
+    + "\"d1\":\"" + str.tostring(div1, "#.##") + "\",\"d1d\":\"" + _d1_dir + "\","
+    + "\"d2\":\"" + str.tostring(div2, "#.##") + "\",\"d2d\":\"" + _d2_dir + "\","
+    + "\"d3\":\"" + str.tostring(div3, "#.##") + "\",\"d3d\":\"" + _d3_dir + "\","
+    + "\"d5\":\"" + str.tostring(div5, "#.##") + "\",\"d5d\":\"" + _d5_dir + "\","
+    + "\"d6\":\"" + str.tostring(div6, "#.##") + "\",\"d6d\":\"" + _d6_dir + "\","
+    + "\"bull_count\":\"" + str.tostring(div_directions) + "\","
+    + "\"obv\":\"" + str.tostring(obv_norm, "#.###") + "\""
+    + "}"
+
+// Son bar'da pattern varsa anında webhook fırlat
+// NOT: pattern yoksa signal_type sıfırlanır, alert tekrarlanmaz
+if signal_type != "" and signal_strength > 0
+    alert(make_alert_msg(signal_type, signal_strength), alert.freq_once_per_bar)
+    
+// Eğer hiçbir pattern yoksa, signal_type'ı sıfırla (tekrarı önle)
+if signal_type != "" and not (box_breakout_up or box_breakout_dn or triple_bull or triple_bear or bull_surround_1 or bear_surround_1 or reverse_bull or reverse_bear or deep_bull or deep_bear or d2_turning_bull or d2_turning_bear)
+    signal_type := ""
+    signal_strength := 0
 
 // ═══════════════════════════════════════════════════════════
 // 📊 GÖSTERGE ÇİZİMLERİ
@@ -250,7 +328,7 @@ if show_signals
               color=color.new(color.rgb(255,140,0), 40), text="🟠", size=size.tiny)
 
 // --- Bilgi Paneli ---
-var table info = table.new(position.top_right, 2, 12, bgcolor=color.new(#0a0a1a, 85), border_color=#333355)
+var table info = table.new(position.top_right, 2, 14, bgcolor=color.new(#0a0a1a, 85), border_color=#333355)
 if barstate.islast
     sig_clr = signal_type == "BULLISH_SURROUND" ? color.rgb(0,255,120) : 
               signal_type == "BEARISH_SURROUND" ? color.rgb(255,60,60) : color.rgb(136,136,153)
@@ -301,6 +379,14 @@ if barstate.islast
     table.cell(info, 0, 11, "Div2 Turn", text_color=#8888bb, text_size=size.small)
     table.cell(info, 1, 11, d2_turning_bull ? "🔄 BOĞA DÖNÜŞ" : d2_turning_bear ? "🔄 AYI DÖNÜŞ" : "-",
                text_color=d2_turning_bull ? color.rgb(0,255,120) : d2_turning_bear ? color.rgb(255,60,60) : color.rgb(136,136,153), text_size=size.small)
+    
+    table.cell(info, 0, 12, "Triple", text_color=#8888bb, text_size=size.small)
+    table.cell(info, 1, 12, triple_bull ? "3B ÜÇLÜ BOĞA" : triple_bear ? "3R ÜÇLÜ AYI" : "-",
+               text_color=triple_bull ? color.rgb(0,255,120) : triple_bear ? color.rgb(255,60,60) : color.rgb(136,136,153), text_size=size.small)
+    
+    table.cell(info, 0, 13, "Box Break", text_color=#8888bb, text_size=size.small)
+    table.cell(info, 1, 13, box_breakout_up ? "⚡ BOX BOĞA" : box_breakout_dn ? "⚡ BOX AYI" : "-",
+               text_color=box_breakout_up ? color.rgb(0,255,120) : box_breakout_dn ? color.rgb(255,60,60) : color.rgb(136,136,153), text_size=size.small)
 
 // --- Arkaplan ---
 bgcolor(color.new(color.rgb(5, 5, 12), 0))
@@ -366,8 +452,26 @@ alertcondition(reverse_bear,
 // --- Alert 8: Div2 Color Turn (Kırmızı/Turuncu dönüş) ---
 alertcondition(d2_turning_bull,
     title="🔄 DIV2 TURNING BULLISH (Orange→Red transition)",
-    message=tv_json_msg() + "DIV2_TURNING_BULLISH\"}")
+    message=tv_json_msg() + "DIV2_TURNING_BULLISH\"")
 
 alertcondition(d2_turning_bear,
     title="🔄 DIV2 TURNING BEARISH (Red→Orange transition)",
     message=tv_json_msg() + "DIV2_TURNING_BEARISH\"}")
+
+// --- Alert 9: Triple Agreement (Üçlü Uyum) ---
+alertcondition(triple_bull,
+    title="🔵 TRIPLE BULLISH (Purple+Red+Blue all UP)",
+    message=tv_json_msg() + "TRIPLE_BULLISH\",\"strength\":\"4\",\"directions\":\"" + str.tostring(div_directions) + "\"}")
+
+alertcondition(triple_bear,
+    title="🟠 TRIPLE BEARISH (Pink+Orange+Brown all DOWN)",
+    message=tv_json_msg() + "TRIPLE_BEARISH\",\"strength\":\"4\",\"directions\":\"" + str.tostring(div_directions) + "\"}")
+
+// --- Alert 10: Box Breakout (Kutu Patlaması) ---
+alertcondition(box_breakout_up,
+    title="⚡ BOX BREAKOUT BULLISH (Consolidation breakout up)",
+    message=tv_json_msg() + "BOX_BREAKOUT_BULL\",\"strength\":\"5\",\"range\":\"" + str.tostring(box_range, "#.###") + "\"}")
+
+alertcondition(box_breakout_dn,
+    title="⚡ BOX BREAKOUT BEARISH (Consolidation breakout down)",
+    message=tv_json_msg() + "BOX_BREAKOUT_BEAR\",\"strength\":\"5\",\"range\":\"" + str.tostring(box_range, "#.###") + "\"}")

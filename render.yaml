@@ -1,0 +1,31 @@
+# ═══════════════════════════════════════════════════════════
+# RTUG COLOR SURROUND — Render.com Deployment Config
+# ═══════════════════════════════════════════════════════════
+# 1. GitHub repo'nu Render'a bağla
+# 2. Render'da "New Web Service" → bu repo
+# 3. Start Command: python rtug_webhook_server.py
+# 4. Environment Variables:
+#    TELEGRAM_BOT_TOKEN = <bot token>
+#    TELEGRAM_CHAT_ID   = 6988108865
+# 5. Deploy!
+#
+# Render free tier: herkese açık URL, 750 saat/ay (always-on için yeterli)
+# ═══════════════════════════════════════════════════════════
+
+services:
+  - type: web
+    name: rtug-webhook
+    env: python
+    buildCommand: pip install flask requests python-dotenv
+    startCommand: python rtug_webhook_server.py
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false  # Render dashboard'dan gir
+      - key: TELEGRAM_CHAT_ID
+        value: "6988108865"
+      - key: WEBHOOK_PORT
+        value: "5000"
+      - key: DEBUG
+        value: "false"
+    healthCheckPath: /health
+    autoDeploy: true
