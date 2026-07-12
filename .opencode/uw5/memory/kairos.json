@@ -1,0 +1,33 @@
+﻿{
+    "name":  "KAIROS Memory Engine",
+    "version":  "2.0",
+    "description":  "Hata hafızası ve öğrenme veritabanı.",
+    "schema":  {
+                   "error_signature":  "string — Hata imzası (AST pattern + hata metni hash)",
+                   "domain":  "string — Hangi domain (pine, web, ios, trading, system_database, ...)",
+                   "description":  "string — İnsan okunabilir hata açıklaması",
+                   "symptoms":  "string[] — Belirti listesi",
+                   "root_cause":  "string — Kök neden analizi",
+                   "solution_diff":  "string — Çözüm patch\u0027i (hangi dosyalar nasıl değiştirildi)",
+                   "success_rate":  "float — 0.0-1.0 başarı oranı",
+                   "attempt_count":  "int — Deneme sayısı",
+                   "timestamp":  "datetime — İlk kayıt",
+                   "last_used":  "datetime — Son kullanım",
+                   "files_affected":  "string[] — Etkilenen dosya listesi",
+                   "prevention":  "string — Tekrarı önleme yöntemi"
+               },
+    "storage":  "~/.config/opencode/.kairos/records/",
+    "auto_prune":  true,
+    "prune_threshold_days":  90,
+    "current_records":  [
+                            "sqlite-wal-checkpoint-failure-20260712.json",
+                            "rag-context-enrichment-20260712.json",
+                            "rag-local-offline-unreachable-20260712.json",
+                            "uw5-final-lock-verified-20260712.json",
+                            "global-access-fix-20260712.json",
+                            "github-backup-autopush-20260712.json",
+                            "wsl2-integration-20260712.json",
+                            "docker-sandbox-optional-20260712.json",
+                            "gpu-vram-monitoring-20260712.json"
+                        ]
+}

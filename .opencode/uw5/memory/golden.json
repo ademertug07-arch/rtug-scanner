@@ -1,0 +1,18 @@
+{
+  "name": "Golden State Manager",
+  "description": "Her görev sonrası state backup, son 10 korunur.",
+  "storage": "~/.config/opencode/.golden-state/",
+  "max_backups": 10,
+  "include": [
+    "active-context.md",
+    "task status",
+    "file changes",
+    "decision log",
+    "pipeline trace"
+  ],
+  "restore_triggers": [
+    "crash recovery",
+    "manual /uw5 restore",
+    "rollback request"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "languages": {
+    "python": { "lsp": "pyright", "command": "pyright-langserver", "extensions": [".py"] },
+    "typescript": { "lsp": "typescript", "command": "typescript-language-server", "extensions": [".ts", ".tsx", ".js", ".jsx"] },
+    "rust": { "lsp": "rust-analyzer", "command": "rust-analyzer", "extensions": [".rs"] },
+    "go": { "lsp": "gopls", "command": "gopls", "extensions": [".go"] },
+    "pine": { "lsp": "pine-lsp", "command": "pine-language-server", "extensions": [".pine"] },
+    "php": { "lsp": "intelephense", "command": "intelephense", "extensions": [".php"] },
+    "swift": { "lsp": "sourcekit-lsp", "command": "sourcekit-lsp", "extensions": [".swift"] }
+  },
+  "load_on_demand": true,
+  "unload_after_task": true
+}

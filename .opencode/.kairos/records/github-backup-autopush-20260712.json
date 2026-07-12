@@ -1,0 +1,10 @@
+﻿{
+    "intent_embedding":  "uw5_github_remote_backup",
+    "last_used":  "2026-07-12T13:58:00+03:00",
+    "timestamp":  "2026-07-12T13:58:00+03:00",
+    "success_rate":  0.7,
+    "attempt_count":  1,
+    "solution_diff":  "Added GitHub remote to .version-history/; created uw5-git-push.ps1 (non-blocking); wired into executor L19; updated STATE_MANIFEST (remote_backup field). NOTE: GITHUB_TOKEN lacks write permission — mechanism ready, requires token update",
+    "domain":  "devops",
+    "error_signature":  "github-backup-autopush-20260712"
+}

@@ -1,0 +1,115 @@
+[
+  {
+    "label": "OpenCode - Launch",
+    "command": "cmd",
+    "args": ["/c", "start", "\"OpenCode\"", "cmd", "/k", "\"C:\\Users\\cagda\\OneDrive\\Masaustu\\open code mode\\opencode\""],
+    "tags": ["opencode", "ai"],
+    "description": "OpenCode in new window"
+  },
+  {
+    "label": "OpenCode - Workspace",
+    "command": "cmd",
+    "args": ["/c", "start", "\"OpenCode\"", "/wait", "cmd", "/k", "\"cd\", \"/d\", \"C:\\Users\\cagda\\OneDrive\\Masaustu\\open code mode\", \"&&\", \"opencode\""],
+    "use_new_terminal": true,
+    "tags": ["opencode", "ai"],
+    "description": "OpenCode in workspace"
+  },
+  {
+    "label": "OpenCode - Quick",
+    "command": "cmd",
+    "args": ["/c", "start", "\"OpenCode\"", "/b", "cmd", "/c", "\"cd\", \"/d\", \"C:\\Users\\cagda\\OneDrive\\Masaustu\\open code mode\", \"&&\", \"echo\", \"opencode | exit\"", "&", "exit"],
+    "tags": ["opencode", "ai"],
+    "description": "Quick OpenCode task (no window)"
+  },
+  {
+    "label": "Snapshot - Backup Now",
+    "command": "powershell",
+    "args": ["-NoProfile", "-Command", "& \"$env:USERPROFILE\\.uw5-memory\\snapshot.ps1\""],
+    "tags": ["system"],
+    "description": "Run full system backup"
+  },
+  {
+    "label": "Snapshot - List",
+    "command": "powershell",
+    "args": ["-NoProfile", "-Command", "& \"$env:USERPROFILE\\.uw5-memory\\full-restore.ps1\" -List"],
+    "tags": ["system"],
+    "description": "List all backups"
+  },
+  {
+    "label": "Snapshot - Restore",
+    "command": "powershell",
+    "args": ["-NoProfile", "-Command", "Write-Host 'Enter snapshot ID:'; $id = Read-Host; & \"$env:USERPROFILE\\.uw5-memory\\full-restore.ps1\" $id"],
+    "tags": ["system"],
+    "description": "Restore from a snapshot"
+  },
+  {
+    "label": "LSP - Install",
+    "command": "powershell",
+    "args": ["-NoProfile", "-Command", "npm install -g typescript-language-server pyright vscode-html-language-server vscode-css-language-server vscode-json-language-server vscode-markdown-language-server eslint_d"],
+    "tags": ["tools", "lsp"],
+    "description": "Install all LSP servers globally"
+  },
+  {
+    "label": "LSP - List",
+    "command": "powershell",
+    "args": ["-NoProfile", "-Command", "npm ls -g --depth=0 2>`$null | Select-String 'typescript|pyright|html|css|json|markdown|eslint|ruff|prettier'"],
+    "tags": ["tools", "lsp"],
+    "description": "List installed LSP servers"
+  },
+  {
+    "label": "Projects - Open",
+    "command": "explorer",
+    "args": ["C:\\Users\\cagda\\Projects"],
+    "tags": ["folder"],
+    "description": "Open Projects folder"
+  },
+  {
+    "label": "Tools - Open",
+    "command": "explorer",
+    "args": ["C:\\Users\\cagda\\Tools"],
+    "tags": ["folder"],
+    "description": "Open Tools folder"
+  },
+  {
+    "label": "Docs - Open",
+    "command": "explorer",
+    "args": ["C:\\Users\\cagda\\Docs"],
+    "tags": ["folder"],
+    "description": "Open Docs folder"
+  },
+  {
+    "label": "Knowledge - Open",
+    "command": "explorer",
+    "args": ["$env:USERPROFILE\\.claude\\knowledge"],
+    "tags": ["folder"],
+    "description": "Open Knowledge Base folder"
+  },
+  {
+    "label": "Obsidian Vault - Open",
+    "command": "explorer",
+    "args": ["$env:USERPROFILE\\Obsidian Vault"],
+    "tags": ["folder"],
+    "description": "Open Obsidian Vault"
+  },
+  {
+    "label": "Terminal - PowerShell",
+    "command": "powershell",
+    "args": [],
+    "tags": ["terminal"],
+    "description": "Open PowerShell terminal"
+  },
+  {
+    "label": "Terminal - Git Bash",
+    "command": "cmd",
+    "args": ["/c", "start", "\"Git Bash\"", "\"C:\\Program Files\\Git\\git-bash.exe\"", "--cd=\"C:\\Users\\cagda\\OneDrive\\Masaustu\\open code mode\""],
+    "tags": ["terminal"],
+    "description": "Open Git Bash terminal"
+  },
+  {
+    "label": "Diagnose - System",
+    "command": "powershell",
+    "args": ["-NoProfile", "-Command", "Write-Host '=== SISTEM ===' -ForegroundColor Cyan; Get-ComputerInfo -Property OsName,OsVersion,OsArchitecture; Write-Host ''; Write-Host '=== RAM ===' -ForegroundColor Cyan; (Get-CimInstance Win32_PhysicalMemory | Measure-Object -Property Capacity -Sum).Sum/1GB; Write-Host ''; Write-Host '=== DISK ===' -ForegroundColor Cyan; Get-PSDrive -PSProvider FileSystem | Where-Object {$_.Used -gt 0} | Select-Object Name, @{N='SizeGB';E={[math]::Round($_.Used/1GB,1)}}, @{N='FreeGB';E={[math]::Round($_.Free/1GB,1)}}; Write-Host ''; Write-Host '=== PATH ===' -ForegroundColor Cyan; $env:Path -split ';' | Where-Object {$_ -match 'opencode|Zed|claude|uw5'} | ForEach-Object { \"  $_\" }"],
+    "tags": ["system", "diagnose"],
+    "description": "Show system diagnostics"
+  }
+]

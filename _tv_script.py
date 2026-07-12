@@ -1,0 +1,5 @@
+ensure_real_tab()
+navigate("https://tr.tradingview.com/chart/WfKlLjel/")
+wait(8)
+screenshot("C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\tv_live.png")
+print("SCREENSHOT_OK")

@@ -1,0 +1,28 @@
+{
+  "name": "Full Path",
+  "routes": [2, 4, 5, 7, 8],
+  "description": "Tüm katmanları işleten tam pipeline. Reasoning, planning, quality gates aktif.",
+  "layers": [
+    { "id": "L00", "name": "Master Hub", "description": "Intent → Route → Path → Guard" },
+    { "id": "L01", "name": "Context Guard", "description": "10+ tur / 15K+ token → compact" },
+    { "id": "L02", "name": "Task Planner", "description": "Goal → Breakdown → Dependency" },
+    { "id": "L03", "name": "KAIROS Recall + Semantic Search", "description": "Hafıza + kod tabanı arama" },
+    { "id": "L04", "name": "Workspace Knowledge Graph", "description": "İmport/call/depends grafiği" },
+    { "id": "L05", "name": "Capability Matrix", "description": "Skill/tool/context ihtiyaç analizi" },
+    { "id": "L06", "name": "Cost Optimizer", "description": "Weighted model seçimi" },
+    { "id": "L07", "name": "Model Router", "description": "Model seçimi" },
+    { "id": "L08", "name": "Skill Auto-Load", "description": "Gerekli skill'leri yükle" },
+    { "id": "L08B", "name": "Skill Generator", "description": "Non-blocking skill oluşturma" },
+    { "id": "L09", "name": "Tool Registry", "description": "Gerekli tool'ları yükle" },
+    { "id": "L10", "name": "Plugin Manager", "description": "Plugin'leri yönet + graph query" },
+    { "id": "L11", "name": "Prompt Compiler", "description": "System+AGENTS+Skill+Memory+Task" },
+    { "id": "L12", "name": "Multi-Agent Orchestrator", "description": "META-MIND strateji seçici" },
+    { "id": "L13", "name": "Execution Engine", "description": "Task'i yürüt" },
+    { "id": "L14", "name": "Sandbox", "description": "İzole çalıştırma" },
+    { "id": "L15", "name": "Verifier + Policy", "description": "Lint/test/security + governance" },
+    { "id": "L16", "name": "Self-Healing", "description": "FAIL→Patch→Verify→Retry(×3)" },
+    { "id": "L17", "name": "Learning Engine", "description": "Trend→Pattern→Skill→Optimize" },
+    { "id": "L18", "name": "Trace Capture", "description": "Dual-mode: real-time + kalıcı" },
+    { "id": "L19", "name": "Golden State", "description": "Save→Memory→Rotate→Clear crash" }
+  ]
+}

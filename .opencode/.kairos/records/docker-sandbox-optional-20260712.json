@@ -1,0 +1,10 @@
+﻿{
+    "intent_embedding":  "uw5_docker_sandbox",
+    "last_used":  "2026-07-12T13:58:00+03:00",
+    "timestamp":  "2026-07-12T13:58:00+03:00",
+    "success_rate":  0.8,
+    "attempt_count":  1,
+    "solution_diff":  "Created sandbox/Dockerfile (pwsh+python3+sklearn); created uw5-sandbox-run.ps1 (dual-mode: logical isolation + optional Docker); wired into executor L14; updated STATE_MANIFEST. Docker Desktop installed (v29.5.2) but daemon not running",
+    "domain":  "infrastructure",
+    "error_signature":  "docker-sandbox-optional-20260712"
+}

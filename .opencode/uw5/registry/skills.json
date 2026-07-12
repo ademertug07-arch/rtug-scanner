@@ -1,0 +1,60 @@
+{
+  "categories": {
+    "web_frontend": {
+      "description": "Web sitesi, UI, animasyon, görsel",
+      "skills": ["cinematic-web", "frontend-design", "gsap-motion", "image-pipeline", "worldbuilder-visual", "web-dev", "shadcn", "chakra-ui-builder", "chakra-ui-migrate", "chakra-ui-refactor", "tanstack-query-best-practices", "clone-website", "tailwindcss-development"]
+    },
+    "backend_api": {
+      "description": "Python, Laravel, CLI, iOS",
+      "skills": ["python-backend", "cli-tool", "laravel-best-practices", "laravel-actions", "ios-swift-architect"]
+    },
+    "trading_finance": {
+      "description": "Pine Script, trading bot, data analysis",
+      "skills": ["pine-script", "trading-bot", "data-analysis", "tradingview-sinyal-analiz-backtest"]
+    },
+    "ai_llm": {
+      "description": "Multi-AI, neural, reasoning, prompt",
+      "skills": ["omega-v12", "god-mode", "deepseek-v4", "synapse", "fable-5", "ultrawork-loop", "beyin-groq", "meta-mind", "devil-steelman", "ust-akil", "humanizer", "adhd-executive-function"]
+    },
+    "mlops_model": {
+      "description": "Model deploy, fine-tune, Foundry",
+      "skills": ["deploy-model", "finetuning", "microsoft-foundry", "azure-aigateway", "preset", "customize", "capacity"]
+    },
+    "azure_cloud": {
+      "description": "Azure, AKS, infra, security",
+      "skills": ["azure-prepare", "azure-deploy", "azure-validate", "azure-kubernetes", "azure-kubernetes-automatic-readiness", "azure-compute", "azure-storage", "azure-ai", "azure-cost", "azure-rbac", "azure-diagnostics", "azure-messaging", "azure-cloud-migrate", "azure-enterprise-infra-planner", "azure-resource-lookup", "azure-resource-visualizer", "azure-upgrade", "azure-hosted-copilot-sdk", "azure-quotas", "azure-reliability", "azure-compliance", "appinsights-instrumentation", "python-appservice-deploy", "airunway-aks-setup", "azure-kusto", "entra-app-registration", "entra-agent-id"]
+    },
+    "n8n_workflow": {
+      "description": "n8n otomasyon, credential, debug",
+      "skills": ["workflow-builder", "credential-setup-with-computer-use", "data-table-manager", "debugging-executions", "n8n-docs-assistant", "n8n-cli", "planning", "post-build-flow", "planned-task-runtime"]
+    },
+    "browser_scraping": {
+      "description": "Browser otomasyonu, web test, QA",
+      "skills": ["browser-use", "cloud", "open-source", "qa", "remote-browser", "x402"]
+    },
+    "sentry_monitoring": {
+      "description": "Sentry hata izleme, debugging",
+      "skills": ["sentry-backend-bugs", "sentry-javascript-bugs", "django-models", "analytics", "cmdk-actions", "notification-platform", "sentry-security", "generate-frontend-forms", "migrate-frontend-forms", "generate-migration", "generate-snapshot-tests", "lint-new", "lint-fix", "hybrid-cloud-outboxes", "hybrid-cloud-rpc", "hybrid-cloud-test-gen", "cell-architecture", "design-system", "setup-dev", "react-component-documentation"]
+    },
+    "laravel_php": {
+      "description": "Laravel, Livewire, Fortify, Socialite, Horizon, Pest",
+      "skills": ["livewire-development", "fortify-development", "socialite-development", "configuring-horizon", "pest-testing", "laravel-actions", "debugging-output-and-previewing-html-using-ray", "tailwindcss-development"]
+    },
+    "gamedev_aaa": {
+      "description": "Unreal Engine 5, AAA oyun geliştirme",
+      "skills": ["unreal", "gamedev", "combat", "ai-npc", "worldbuilder", "uiux", "debug", "architect", "deploy", "perf", "qa", "aaa-studio"]
+    },
+    "hardware_electronics": {
+      "description": "atopile, PCB, devre tasarımı",
+      "skills": ["ato", "ato-language", "faebryk", "compiler", "lsp", "solver", "fabll", "library", "domain-layer", "sexp", "pyzig", "dev", "code-review", "frontend", "planning", "package-agent"]
+    },
+    "devops_system": {
+      "description": "Git, GitHub, KVM, Go, UW pipeline",
+      "skills": ["github-importer", "git-release", "skill-creator", "install-skills", "github-catalog", "kvm-control", "go-naming", "uw5", "uw-v2", "uw-v3"]
+    },
+    "media_content": {
+      "description": "YouTube, Notion, Redis, PostgreSQL, Supabase",
+      "skills": ["yt-pipeline", "yt-search", "notebooklm", "notion-dev", "redis-cache-monitoring-otomatik", "supabase-veritabani-schema-gorsellestirm", "postgresql-query-optimizer-analyzer"]
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "theme": "uw5-cyber-core",
+  "version": "1.0",
+  "display": "dark",
+
+  "meta": {
+    "description": "UW5 Cyber AI Core — bağımsız görsel kimlik. OpenCode temasından bağımsız çalışır.",
+    "update_protection": "OpenCode güncellemelerinde silinmez. Sadece .opencode/uw5/ altında saklanır.",
+    "fallback": "OpenCode varsayılan temasına dokunmaz, üzerine bindirme katmanıdır."
+  },
+
+  "layout": {
+    "frame": "terminal",
+    "header_height": 3,
+    "footer_height": 2,
+    "sidebar_width": 28,
+    "padding": 1,
+    "separator": "━",
+    "corner_tl": "┌",
+    "corner_tr": "┐",
+    "corner_bl": "└",
+    "corner_br": "┘",
+    "connector_l": "├",
+    "connector_r": "┤",
+    "horizontal": "─",
+    "vertical": "│"
+  },
+
+  "typography": {
+    "font_primary": "Cascadia Code, JetBrains Mono, monospace",
+    "font_size": 13,
+    "font_weight_normal": 400,
+    "font_weight_bold": 700,
+    "line_height": 1.5,
+    "letter_spacing": 0.5
+  },
+
+  "animation": {
+    "boot_sequence": true,
+    "pulse_rate": "2s",
+    "fade_in": "300ms",
+    "slide_in": "400ms",
+    "glow_cycle": "4s"
+  },
+
+  "effects": {
+    "glow": true,
+    "scan_line": false,
+    "noise": false,
+    "vignette": true,
+    "terminal_cursor_blink": true,
+    "matrix_rain": false
+  },
+
+  "sections": {
+    "header": { "visible": true, "height": 3, "border": true },
+    "hud": { "visible": true, "position": "top-right", "width": 40 },
+    "pipeline": { "visible": true, "position": "center-left" },
+    "status_bar": { "visible": true, "height": 2, "border": true },
+    "footer": { "visible": true, "height": 2, "border": true }
+  }
+}

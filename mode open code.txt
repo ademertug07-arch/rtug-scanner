@@ -1,0 +1,46 @@
+/ulw-loop - Start ultrawork loop
+/ralph-loop - Start self-referential development loop
+/cancel-ralph - Cancel active Ralph Loop
+/start-work - Start Sisyphus work session
+/stop-continuation - Stop all continuation mechanisms
+/remove-ai-slops - Remove AI-generated code smells
+/handoff - Create context summary for new session
+/hyperplan - Adversarial multi-agent planning
+apply_ultrawork_mode - Returns the full ultrawork mode template
+start_ulw_loop - Returns ulw-loop command instruction
+show_available_commands - Lists all available ultrawork commands
+Provides apply_ultrawork_mode: Returns the ultrawork mode prompt template
+Provides start_ulw_loop: Returns the ulw-loop command
+Provides cancel_ralph: Returns cancel command
+Provides create_handoff: Returns handoff command
+apply_ultrawork_mode - Injects the ultrawork mode template
+start_ulw_loop - Starts an ultrawork loop
+cancel_loop - Cancels a running loop
+create_handoff - Creates a handoff document
+ultrawork-mode - Apply ultrawork mode template
+ulw-loop - Start ultrawork loop
+ralph-loop - Start self-referential development loop
+cancel-ralph - Cancel active loop
+start-work - Start work session
+handoff - Create handoff document
+hyperplan - Adversarial multi-agent planning
+Ultrawork modu tamamen kuruldu. Değişiklikler:
+
+1. opencode.jsonc — 3 yeni subagent eklendi
+generator — kod yazar, production-quality, websearch erişimli
+critic — denetler, edit yetkisi YOK (read-only), PASS/FAIL verir
+fixer — critic'in bulduğu her sorunu çözer
+2. .ultrawork/ dizini oluşturuldu
+config.json — max 10 iterasyon, kalite gate'leri, rol tanımları
+state.json — canlı state tracker (iteration, status, currentPhase)
+template-task.md — her loop için standart workflow şablonu
+.gitkeep — dizin takibi için
+3. Komutlar güncellendi
+/apply-ultrawork-mode — detaylı setup adımları (dizin, config, state, doğrulama)
+/ulw-loop — 4 adımlı adversarial loop template (Analyze→Generate→Critique→Resolve), iteration tracking, failsafe
+/ulw-status — yeni, anlık state ve geçmiş gösterimi
+/cancel-loop — loop durdurma
+4. AGENTS.md güncellendi
+Ultrawork kullanım talimatı eklendi: /apply-ultrawork-mode → /ulw-loop → /ulw-status → /cancel-loop
+
+Kullanım: /apply-ultrawork-mode yaz, ardından /ulw-loop ile loop'u başlat.

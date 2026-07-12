@@ -1,0 +1,295 @@
+﻿{
+  "version": "1.0",
+  "description": "UW5 v5 Complete System State Manifest — defines 'last known good state' for crash-immune recovery",
+    "last_updated": "2026-07-12T13:57:00+03:00",
+  "resilience_layer": "crash-immune-boot-v1",
+
+  "core_files": {
+    "UW5_CORE.md": {
+      "path": "UW5_CORE.md",
+      "type": "constitution",
+      "criticality": "critical",
+      "description": "UW5 anayasa — mimari, pipeline, policy, komutlar"
+    },
+    "UW5_BASELINE": {
+      "path": "UW5_BASELINE_v5_FINAL.json",
+      "type": "baseline",
+      "criticality": "critical",
+      "description": "DONDURULMUŞ REFERANS — UW5 v5 final locked state. Asla otomatik silinmez/silinemez. Sadece insan onayıyla güncellenir."
+    },
+    "opencode_jsonc": {
+      "path": "~/.config/opencode/config/opencode.jsonc",
+      "type": "config",
+      "criticality": "critical",
+      "description": "OpenCode ana config — model, agent, MCP, tool, permission"
+    },
+    "global_AGENTS_md": {
+      "path": "~/.config/opencode/AGENTS.md",
+      "type": "config",
+      "criticality": "critical",
+      "description": "Global routing referansi — intent route, subagent, skill matrix"
+    }
+  },
+
+  "runtime_scripts": {
+    "uw5_boot": {
+      "path": "runtime/uw5-boot.ps1",
+      "type": "runtime",
+      "criticality": "critical"
+    },
+    "uw5_resolver": {
+      "path": "runtime/uw5-resolver.ps1",
+      "type": "runtime",
+      "criticality": "critical"
+    },
+    "uw5_retrieval_ps1": {
+      "path": "runtime/uw5-retrieval.ps1",
+      "type": "runtime",
+      "criticality": "high"
+    },
+    "uw5_retrieval_py": {
+      "path": "runtime/uw5-retrieval.py",
+      "type": "runtime",
+      "criticality": "high"
+    },
+    "uw5_retrieval_indexer_py": {
+      "path": "runtime/uw5-retrieval-indexer.py",
+      "type": "runtime",
+      "criticality": "high"
+    },
+    "uw5_visual": {
+      "path": "runtime/uw5-visual.ps1",
+      "type": "runtime",
+      "criticality": "medium"
+    },
+    "uw5_root_resolver": {
+      "path": "runtime/uw5-root-resolver.ps1",
+      "type": "runtime",
+      "criticality": "high"
+    },
+    "uw5_bootstrap": {
+      "path": "runtime/uw5-bootstrap.ps1",
+      "type": "runtime",
+      "criticality": "high"
+    },
+    "uw5_memory": {
+      "path": "runtime/uw5-memory.ps1",
+      "type": "runtime",
+      "criticality": "high"
+    },
+    "uw5_state_integrity": {
+      "path": "runtime/uw5-state-integrity.ps1",
+      "type": "runtime",
+      "criticality": "critical"
+    },
+    "uw5_pre_change_snapshot": {
+      "path": "runtime/uw5-pre-change-snapshot.ps1",
+      "type": "runtime",
+      "criticality": "high"
+    },
+    "uw5_restore": {
+      "path": "runtime/uw5-restore.ps1",
+      "type": "runtime",
+      "criticality": "critical"
+    },
+    "uw5_git_push": {
+      "path": "runtime/uw5-git-push.ps1",
+      "type": "runtime",
+      "criticality": "high",
+      "description": "Non-blocking auto-push to GitHub remote (L19 dual-backup)"
+    },
+    "uw5_sandbox_run": {
+      "path": "runtime/uw5-sandbox-run.ps1",
+      "type": "runtime",
+      "criticality": "medium",
+      "description": "Docker sandbox runner (optional L14 container isolation)"
+    },
+    "uw5_wsl2_bridge": {
+      "path": "runtime/uw5-wsl2.ps1",
+      "type": "runtime",
+      "criticality": "low",
+      "description": "WSL2 bridge — execute commands inside WSL2 Ubuntu"
+    }
+  },
+
+  "registries": {
+    "skills_json": {
+      "path": "registry/skills.json",
+      "type": "registry",
+      "criticality": "high"
+    },
+    "mcp_json": {
+      "path": "registry/mcp.json",
+      "type": "registry",
+      "criticality": "high"
+    },
+    "lsp_json": {
+      "path": "registry/lsp.json",
+      "type": "registry",
+      "criticality": "medium"
+    },
+    "plugins_json": {
+      "path": "registry/plugins.json",
+      "type": "registry",
+      "criticality": "medium"
+    },
+    "agents_json": {
+      "path": "registry/agents.json",
+      "type": "registry",
+      "criticality": "high"
+    },
+    "models_json": {
+      "path": "registry/models.json",
+      "type": "registry",
+      "criticality": "high"
+    },
+    "capabilities_json": {
+      "path": "registry/capabilities.json",
+      "type": "registry",
+      "criticality": "high"
+    }
+  },
+
+  "sandbox": {
+    "dockerfile": {
+      "path": "sandbox/Dockerfile",
+      "type": "infrastructure",
+      "criticality": "medium",
+      "description": "Docker sandbox container definition (pwsh + python3)"
+    }
+  },
+
+  "pipeline_definitions": {
+    "fast_json": {
+      "path": "pipeline/fast.json",
+      "type": "pipeline",
+      "criticality": "high"
+    },
+    "full_json": {
+      "path": "pipeline/full.json",
+      "type": "pipeline",
+      "criticality": "high"
+    },
+    "deep_json": {
+      "path": "pipeline/deep.json",
+      "type": "pipeline",
+      "criticality": "high"
+    }
+  },
+
+  "memory_state": {
+    "kairos_json": {
+      "path": "memory/kairos.json",
+      "type": "memory",
+      "criticality": "high"
+    },
+    "golden_json": {
+      "path": "memory/golden.json",
+      "type": "memory",
+      "criticality": "medium"
+    },
+    "vector_index_dir": {
+      "path": "memory/vector-index/",
+      "type": "memory",
+      "criticality": "high",
+      "description": "RAG context enrichment — TF-IDF embedding index"
+    },
+    "visual_state_json": {
+      "path": "memory/visual-state.json",
+      "type": "memory",
+      "criticality": "low"
+    }
+  },
+
+  "config": {
+    "uw5_json": {
+      "path": "config/uw5.json",
+      "type": "config",
+      "criticality": "high"
+    },
+    "STATE_MANIFEST": {
+      "path": "STATE_MANIFEST.json",
+      "type": "manifest",
+      "criticality": "critical",
+      "description": "THIS FILE — system state definition and integrity anchor"
+    }
+  },
+
+  "external_dependencies": {
+    "init_session_ps1": {
+      "path": "~/.config/opencode/scripts/init-session.ps1",
+      "type": "system_script",
+      "criticality": "high"
+    },
+    "golden_state_ps1": {
+      "path": "~/.config/opencode/scripts/golden-state.ps1",
+      "type": "system_script",
+      "criticality": "high"
+    },
+    "rollback_manager_ps1": {
+      "path": "~/.config/opencode/scripts/rollback-manager.ps1",
+      "type": "system_script",
+      "criticality": "high"
+    }
+  },
+
+  "backup_locations": {
+    "layer_1_golden_state": {
+      "path": "~/.config/opencode/.golden-state/",
+      "type": "auto_backup",
+      "capacity": 10,
+      "description": "Post-task auto backup (active-context.md + metadata)"
+    },
+    "layer_2_snapshot": {
+      "path": ".uw5-snapshots/",
+      "type": "manual_backup",
+      "capacity": "unlimited",
+      "description": "Named checkpoint snapshots (manual /snap)"
+    },
+    "layer_3_pre_change": {
+      "path": "~/.config/opencode/.pre-change-snapshots/",
+      "type": "auto_backup",
+      "capacity": 20,
+      "description": "Pre-change automatic snapshots (auto before major changes)"
+    },
+    "layer_4_version_history": {
+      "path": ".version-history/",
+      "type": "git_backup",
+      "capacity": "unlimited",
+      "description": "Git-based version history of critical UW5 files",
+      "remote": {
+        "url": "https://github.com/ademertug07-arch/uw5-version-history.git",
+        "branch": "master",
+        "last_push": null,
+        "auto_sync_enabled": true,
+        "needs_token_update": true
+      }
+    },
+    "layer_5_baseline": {
+      "path": "UW5_BASELINE_v5_FINAL.json",
+      "type": "immutable_reference",
+      "capacity": 1,
+      "immutable": true,
+      "description": "KALICI SABİT NOKTA — Hiçbir rotasyon/silme mekanizması bu dosyayı silmez. /uw5 restore baseline ile dönülür."
+    }
+  },
+
+  "integrity": {
+    "algorithm": "sha256",
+    "verify_on_boot": true,
+    "verify_on_update": true,
+    "auto_repair": true,
+    "max_verify_time_ms": 2000,
+    "fail_action": "auto_restore_from_golden"
+  },
+
+  "restore_triggers": [
+    "init_session_crash_flag",
+    "boot_integrity_failure",
+    "post_update_health_check",
+    "manual_uw5_restore_latest",
+    "manual_uw5_restore_timestamp",
+    "manual_uw5_restore_baseline",
+    "self_healing_loop_L16"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "agents": [
+    { "name": "universal-orchestrator", "domain": "general", "model": "ultra", "description": "Default — tüm domain'leri yönetir" },
+    { "name": "pine-architect", "domain": "pine", "model": "flash", "description": "Pine Script v5/v6 specialist" },
+    { "name": "ai-systems-architect", "domain": "ai_backend", "model": "ultra", "description": "AI/Backend/Agent systems" },
+    { "name": "web-artifact-forge", "domain": "web", "model": "ultra", "description": "Web/Cinematic UI" },
+    { "name": "ios-swift-architect", "domain": "ios", "model": "ultra", "description": "iOS/Swift" },
+    { "name": "visual-pipeline-ops", "domain": "visual", "model": "ultra", "description": "Görsel/Video" },
+    { "name": "deep-thinker", "domain": "analysis", "model": "deep", "description": "Derin analiz, strateji" },
+    { "name": "code-reviewer", "domain": "review", "model": "ultra", "description": "Kod inceleme" },
+    { "name": "security-scanner", "domain": "security", "model": "deep", "description": "Güvenlik taraması" },
+    { "name": "explore", "domain": "discovery", "model": "flash", "description": "Hızlı kod tabanı keşfi" },
+    { "name": "plan-reviewer", "domain": "planning", "model": "ultra", "description": "Plan/mimari incelemesi" },
+    { "name": "email-responder", "domain": "communication", "model": "ultra", "description": "E-posta yanıtlama" },
+    { "name": "prod-audit", "domain": "audit", "model": "ultra", "description": "Production-readiness denetimi" }
+  ],
+  "executive_council": [
+    { "role": "CEO", "domain": "strategy", "description": "Strateji, vizyon, roadmap" },
+    { "role": "CTO", "domain": "architecture", "description": "Teknik mimari, tech stack" },
+    { "role": "CFO", "domain": "finance", "description": "Maliyet, budget, ROI" },
+    { "role": "COO", "domain": "operations", "description": "Operasyon, süreç, takvim" },
+    { "role": "CMO", "domain": "marketing", "description": "Dokümantasyon, yayın" },
+    { "role": "CISO", "domain": "security", "description": "Güvenlik, compliance, risk" }
+  ]
+}

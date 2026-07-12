@@ -1,0 +1,22 @@
+{
+  "name": "Fast Lane",
+  "routes": [1, 3, 6],
+  "description": "Deterministik/düşük riskli task'ler için hızlı yol. L01-L06 atlanır.",
+  "layers": [
+    { "id": "L00", "name": "Master Hub", "description": "Intent → Route → Path → Guard" },
+    { "id": "L07", "name": "Model Router", "description": "Model seçimi" },
+    { "id": "L08", "name": "Skill Auto-Load", "description": "Gerekli skill'leri yükle" },
+    { "id": "L08B", "name": "Skill Generator", "description": "Non-blocking skill oluşturma" },
+    { "id": "L09", "name": "Tool Registry", "description": "Gerekli tool'ları yükle" },
+    { "id": "L10", "name": "Plugin Manager", "description": "Plugin'leri yönet" },
+    { "id": "L11", "name": "Prompt Compiler", "description": "Prompt'u derle" },
+    { "id": "L12", "name": "Multi-Agent Orchestrator", "description": "Agent seçimi + META-MIND" },
+    { "id": "L13", "name": "Execution Engine", "description": "Task'i yürüt" },
+    { "id": "L14", "name": "Sandbox", "description": "İzole çalıştırma" },
+    { "id": "L15", "name": "Verifier + Policy", "description": "Doğrulama + governance" },
+    { "id": "L16", "name": "Self-Healing", "description": "Hata kurtarma (×3)" },
+    { "id": "L17", "name": "Learning Engine", "description": "Öğrenme + pattern çıkarma" },
+    { "id": "L18", "name": "Trace Capture", "description": "Pipeline raporu" },
+    { "id": "L19", "name": "Golden State", "description": "State kaydet + memory güncelle" }
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "nexus_health_check": {
+    "timestamp": "2026-07-10T19:30:00+03:00",
+    "python_environment": {
+      "version": "3.12.10",
+      "executable": "python",
+      "status": "AVAILABLE"
+    },
+    "components": {
+      "kairos_engine": {
+        "path": "C:\\Users\\cagda\\.config\\opencode\\kairos\\engine.py",
+        "exists": true,
+        "size_bytes": 6024,
+        "runnable": true,
+        "commands_available": [
+          "record",
+          "recall",
+          "get-error-solution",
+          "consolidate",
+          "get-frequent-errors",
+          "suggest-shortcuts"
+        ],
+        "status": "HEALTHY"
+      },
+      "evolve_ps1": {
+        "path": "C:\\Users\\cagda\\.config\\opencode\\evolve.ps1",
+        "exists": true,
+        "size_bytes": 2221,
+        "status": "HEALTHY"
+      },
+      "enforce_ps1": {
+        "path": "C:\\Users\\cagda\\.config\\opencode\\enforce.ps1",
+        "exists": true,
+        "size_bytes": 2967,
+        "status": "HEALTHY"
+      },
+      "nexus_mimari_md": {
+        "path": "C:\\Users\\cagda\\.config\\opencode\\NEXUS_MIMARI.md",
+        "exists": true,
+        "size_bytes": 31975,
+        "status": "HEALTHY"
+      },
+      "fable5_start_ps1": {
+        "path": "D:\\.claude\\skills\\fable-5\\start.ps1",
+        "exists": true,
+        "size_bytes": 2653,
+        "status": "HEALTHY"
+      },
+      "omega_jarvis_opencode_config": {
+        "path": "C:\\Users\\cagda\\OneDrive\\Masaüstü\\ai asistan\\omega-jarvis-ai-os\\.opencode\\opencode.json",
+        "exists": true,
+        "size_bytes": 484,
+        "status": "HEALTHY"
+      },
+      "kairos_memory_db": {
+        "path": "C:\\Users\\cagda\\.config\\opencode\\kairos\\memory.db",
+        "exists": true,
+        "size_bytes": 49152,
+        "size_formatted": "48.0 KB",
+        "status": "HEALTHY"
+      }
+    },
+    "snapshots": {
+      "workspace": "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode",
+      "snapshots_dir": ".uw5-snapshots",
+      "total_snapshots": 10,
+      "last_3_snapshots": [
+        {
+          "folder": "snap_20260710-192800_manual_unknown",
+          "date": "2026-07-10 19:28:00",
+          "age": "2 minutes ago"
+        },
+        {
+          "folder": "snap_20260710-140748_session_baslangic_unknown",
+          "date": "2026-07-10 14:07:48",
+          "age": "5 hours ago"
+        },
+        {
+          "folder": "snap_20260709-160720_ekosistem-otomatik_unknown",
+          "date": "2026-07-09 16:07:20",
+          "age": "1 day ago"
+        }
+      ],
+      "all_snapshots": [
+        "snap_20260710-192800_manual_unknown",
+        "snap_20260710-140748_session_baslangic_unknown",
+        "snap_20260709-161520_wikipedia-mcp_unknown",
+        "snap_20260709-160720_ekosistem-otomatik_unknown",
+        "snap_20260709-160417_ekosistem-entegrasyon_unknown",
+        "snap_20260709-160313_git-release-skill_unknown",
+        "snap_20260709-160135_mcp-guncelleme_unknown",
+        "snap_20260709-151638_test_unknown",
+        "logs (dir)",
+        "archive (dir)"
+      ],
+      "status": "SNAPSHOTS_ACTIVE"
+    },
+    "summary": {
+      "total_components_checked": 8,
+      "healthy": 8,
+      "degraded": 0,
+      "failed": 0,
+      "overall_status": "ALL_HEALTHY"
+    }
+  }
+}

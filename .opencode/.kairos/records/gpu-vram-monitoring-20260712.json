@@ -1,0 +1,10 @@
+﻿{
+    "intent_embedding":  "uw5_gpu_vram",
+    "last_used":  "2026-07-12T13:58:00+03:00",
+    "timestamp":  "2026-07-12T13:58:00+03:00",
+    "success_rate":  1,
+    "attempt_count":  1,
+    "solution_diff":  "Added nvidia-smi VRAM monitoring to health-monitor.ps1 (RTX 4070: 274/8188 MB = 3.3%); VRAM \u003e90% triggers UW5_VRAM_CRITICAL env var; uw5-resolver.ps1 auto-overrides local/offline-\u003eflash when VRAM critical; verified with test (LOCAL→FLASH override confirmed)",
+    "domain":  "monitoring",
+    "error_signature":  "gpu-vram-monitoring-20260712"
+}

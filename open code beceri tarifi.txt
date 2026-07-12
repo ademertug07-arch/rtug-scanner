@@ -1,0 +1,5 @@
+/deep → subagent (Claude Sonnet) ile zorlu iş
+/uw → meta-mind orkestratör
+/direct → tek pas, hızlı çözüm
+/reflect → düşün+üret+eleştir+rafine et
+/triad → 3 farklı bakış açısı + sentez

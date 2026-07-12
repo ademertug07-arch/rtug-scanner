@@ -1,0 +1,10 @@
+﻿{
+    "intent_embedding":  "uw5_wsl2_bridge",
+    "last_used":  "2026-07-12T13:58:00+03:00",
+    "timestamp":  "2026-07-12T13:58:00+03:00",
+    "success_rate":  1,
+    "attempt_count":  1,
+    "solution_diff":  "Tested WSL2 (Ubuntu running, Python 3.14, GPU passthrough OK); determined Windows-native preferred for Ollama (3.1x faster Python startup); added WSL2 strategies 8+9 to uw5-root-resolver.ps1; created uw5-wsl2.ps1 bridge script",
+    "domain":  "infrastructure",
+    "error_signature":  "wsl2-integration-20260712"
+}

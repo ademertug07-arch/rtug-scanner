@@ -1,0 +1,177 @@
+{
+  "hud": {
+    "version": "2.0",
+    "enabled": true,
+    "refresh_rate_ms": 1000,
+    "position": "top-right",
+    "width": 42,
+    "collapsible": true,
+    "collapsed_by_default": false
+  },
+
+  "panels": [
+    {
+      "id": "uw5_version",
+      "label": "UW5 VERSION",
+      "source": "static",
+      "value": "v5.0",
+      "icon": "⬡",
+      "color": "accent.cyan.primary",
+      "order": 0,
+      "visible": true
+    },
+    {
+      "id": "current_route",
+      "label": "ROUTE",
+      "source": "runtime",
+      "field": "route",
+      "default": "—",
+      "icon": "➤",
+      "color": "accent.blue.primary",
+      "order": 1,
+      "visible": true
+    },
+    {
+      "id": "pipeline_status",
+      "label": "PIPELINE",
+      "source": "runtime",
+      "field": "pipeline",
+      "default": "—",
+      "icon": "⊞",
+      "color": "accent.purple.primary",
+      "order": 2,
+      "visible": true
+    },
+    {
+      "id": "active_layer",
+      "label": "LAYER",
+      "source": "runtime",
+      "field": "layer",
+      "default": "L00",
+      "icon": "◈",
+      "color": "accent.cyan.primary",
+      "order": 3,
+      "visible": true
+    },
+    {
+      "id": "active_agent",
+      "label": "AGENT",
+      "source": "runtime",
+      "field": "agent",
+      "default": "universal-architect",
+      "icon": "◆",
+      "color": "accent.green.primary",
+      "order": 4,
+      "visible": true
+    },
+    {
+      "id": "active_model",
+      "label": "MODEL",
+      "source": "runtime",
+      "field": "model",
+      "default": "balanced",
+      "icon": "◎",
+      "color": "accent.blue.primary",
+      "order": 5,
+      "visible": true
+    },
+    {
+      "id": "memory_status",
+      "label": "MEMORY",
+      "source": "runtime",
+      "field": "memory",
+      "default": "INITIALIZING",
+      "icon": "▤",
+      "color": "accent.green.primary",
+      "order": 6,
+      "visible": true,
+      "states": {
+        "HEALTHY": { "color": "semantic.success", "icon": "▤" },
+        "DEGRADED": { "color": "semantic.warning", "icon": "▣" },
+        "ERROR": { "color": "semantic.error", "icon": "▥" },
+        "INITIALIZING": { "color": "semantic.info", "icon": "▤" }
+      }
+    },
+    {
+      "id": "execution_time",
+      "label": "EXEC TIME",
+      "source": "runtime",
+      "field": "exec_time",
+      "default": "0.0s",
+      "icon": "⏱",
+      "color": "text.secondary",
+      "order": 7,
+      "visible": true
+    },
+    {
+      "id": "token_usage",
+      "label": "TOKENS",
+      "source": "runtime",
+      "field": "tokens",
+      "default": "0",
+      "icon": "∑",
+      "color": "text.secondary",
+      "order": 8,
+      "visible": true
+    },
+    {
+      "id": "self_heal",
+      "label": "SELF HEAL",
+      "source": "runtime",
+      "field": "self_heal",
+      "default": "STANDBY",
+      "icon": "⟳",
+      "color": "accent.green.primary",
+      "order": 9,
+      "visible": true,
+      "states": {
+        "ACTIVE": { "color": "semantic.warning", "icon": "⟳" },
+        "STANDBY": { "color": "semantic.success", "icon": "⟳" },
+        "FAILED": { "color": "semantic.error", "icon": "⟳" }
+      }
+    },
+    {
+      "id": "optimization",
+      "label": "OPTIMIZE",
+      "source": "runtime",
+      "field": "optimization",
+      "default": "IDLE",
+      "icon": "⚙",
+      "color": "text.secondary",
+      "order": 10,
+      "visible": true,
+      "states": {
+        "ACTIVE": { "color": "accent.cyan.primary", "icon": "⚙" },
+        "IDLE": { "color": "text.secondary", "icon": "⚙" },
+        "LEARNING": { "color": "accent.purple.primary", "icon": "⚛" }
+      }
+    }
+  ],
+
+  "pipeline_visual": {
+    "enabled": true,
+    "style": "flow",
+    "layers": [
+      {"id": "L00", "label": "MASTER HUB", "color": "pipeline.done"},
+      {"id": "L01", "label": "CONTEXT", "color": "pipeline.done"},
+      {"id": "L02", "label": "PLANNER", "color": "pipeline.done"},
+      {"id": "L03", "label": "KAIROS", "color": "pipeline.active"},
+      {"id": "L04", "label": "GRAPH", "color": "pipeline.pending"},
+      {"id": "L05", "label": "CAPABILITY", "color": "pipeline.pending"},
+      {"id": "L06", "label": "COST", "color": "pipeline.pending"},
+      {"id": "L07", "label": "ROUTER", "color": "pipeline.pending"},
+      {"id": "L08", "label": "SKILL", "color": "pipeline.pending"},
+      {"id": "L09", "label": "TOOLS", "color": "pipeline.pending"},
+      {"id": "L10", "label": "PLUGIN", "color": "pipeline.pending"},
+      {"id": "L11", "label": "PROMPT", "color": "pipeline.pending"},
+      {"id": "L12", "label": "ORCHESTRATOR", "color": "pipeline.pending"},
+      {"id": "L13", "label": "EXECUTE", "color": "pipeline.pending"},
+      {"id": "L14", "label": "SANDBOX", "color": "pipeline.pending"},
+      {"id": "L15", "label": "VERIFIER", "color": "pipeline.pending"},
+      {"id": "L16", "label": "SELF-HEAL", "color": "pipeline.pending"},
+      {"id": "L17", "label": "LEARN", "color": "pipeline.pending"},
+      {"id": "L18", "label": "TRACE", "color": "pipeline.pending"},
+      {"id": "L19", "label": "GOLDEN", "color": "pipeline.pending"}
+    ]
+  }
+}

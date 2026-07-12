@@ -1,0 +1,67 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  "instructions": [
+    "C:/Users/cagda/.config/opencode/AGENTS.md",
+    "~/.uw5-memory/active-context.md",
+    "~/.config/opencode/scripts/uw5-init.md"
+  ],
+
+  "command": {
+    "uw": {
+      "template": "Singularity Engine FULLY ACTIVATED. You are the master orchestrator. Analyze the user's request in real-time, determine the correct domain and skill from ALL available skills, and auto-route. Full spectrum: AAA Game Studio, Web/UI, Data/AI, Azure, Sentry, n8n, Laravel/PHP, Hardware, Browser, Tools. Load meta-mind. Auto mode: detect intent, load correct skill(s), execute. Ready.",
+      "description": "Ultra Work Loop - master orchestrator for ALL skills"
+    },
+
+    "compact": { "template": "Summarize and compact the conversation to free up context window. Keep all critical decisions and code changes." },
+    "review": { "template": "Review the last code changes for bugs, security issues, performance, and maintainability." },
+    "scan": { "template": "Run a security scan on the current project. Check for vulnerabilities, hardcoded secrets, and dependency issues." },
+    "build": { "template": "Build the current project. Detect build system and run appropriate build command." },
+    "sessions": { "template": "List all previous sessions with token count, context usage, and cost." },
+    "sna-backup": {
+      "template": "Run SNA backup. Usage: ./scripts/sna-backup.ps1 (normal), -Quick (config only), -Full (everything+cache), -Name 'label'",
+      "description": "SNA — Tüm sistemi yedekle (config + skills + DB + plugins)"
+    },
+    "sna-restore": {
+      "template": "Run SNA restore. Usage: ./scripts/sna-backup.ps1 -Restore (latest), or ./scripts/sna-restore.ps1 -From <path>",
+      "description": "SNA — Son yedekten geri yükle"
+    },
+    "sna-list": {
+      "template": "List all SNA backups. Usage: ./scripts/sna-restore.ps1 -List",
+      "description": "SNA — Tüm yedekleri listele"
+    },
+    "sna-diagnose": {
+      "template": "Run SNA diagnostics. Usage: powershell -Command \"& { . ./scripts/sna-backup.ps1; Get-SNADiagnostics }\"",
+      "description": "SNA — Sistem durumunu kontrol et"
+    }
+  },
+
+  "mcp": {
+    "playwright": { "type": "local", "command": ["node", "C:\\Users\\cagda\\AppData\\Roaming\\npm\\node_modules\\playwright-mcp\\dist\\index.js"], "enabled": false },
+    "puppeteer": { "type": "local", "command": ["node", "C:\\Users\\cagda\\AppData\\Roaming\\npm\\node_modules\\puppeteer-mcp\\dist\\index.js"], "enabled": false },
+    "chrome-devtools": { "type": "local", "command": ["node", "C:\\Users\\cagda\\AppData\\Roaming\\npm\\node_modules\\chrome-devtools-mcp\\dist\\index.js"], "enabled": false },
+    "docker": { "type": "local", "command": ["node", "C:\\Users\\cagda\\AppData\\Roaming\\npm\\node_modules\\docker-mcp-server\\dist\\index.js"], "enabled": false },
+    "n8n": { "type": "local", "command": ["node", "C:\\Users\\cagda\\AppData\\Roaming\\npm\\node_modules\\n8n-mcp\\dist\\index.js"], "enabled": false },
+    "filesystem": { "type": "local", "command": ["node", "C:\\Users\\cagda\\AppData\\Roaming\\npm\\node_modules\\@modelcontextprotocol\\server-filesystem\\dist\\index.js", "C:\\Users\\cagda\\OneDrive\\Masaüstü\\obsidian"], "enabled": false },
+    "sequential-thinking": { "type": "local", "command": ["node", "C:\\Users\\cagda\\AppData\\Roaming\\npm\\node_modules\\@modelcontextprotocol\\server-sequential-thinking\\dist\\index.js"], "enabled": false },
+    "git": { "type": "local", "command": ["node", "C:\\Users\\cagda\\AppData\\Roaming\\npm\\node_modules\\@modelcontextprotocol\\server-github\\dist\\index.js"], "enabled": false, "environment": { "GITHUB_TOKEN": "{env:GITHUB_TOKEN}" } },
+    "brave-search": { "type": "local", "command": ["C:\\Users\\cagda\\AppData\\Roaming\\npm\\mcp-server-brave-search.cmd"], "enabled": false },
+    "obsidian": { "type": "local", "command": ["C:\\Users\\cagda\\AppData\\Roaming\\npm\\obsidian-mcp-server.cmd"], "enabled": false, "environment": { "OBSIDIAN_API_KEY": "{env:OBSIDIAN_API_KEY}", "OBSIDIAN_BASE_URL": "http://127.0.0.1:27123" } },
+    "postgres": { "type": "local", "command": ["C:\\Users\\cagda\\AppData\\Roaming\\npm\\mcp-server-postgres.cmd", "postgresql://localhost:5432/localdb"], "enabled": false }
+  },
+
+  "theme": "katpuin",
+
+  "model": "deepseek-v4",
+  "small_model": "deepseek-v4",
+
+  "agent": {
+    "default": { "model": "deepseek-v4" },
+    "plan": { "description": "Read-only mode for planning and brainstorming", "model": "deepseek-v4", "tools": { "write": false, "edit": false, "bash": false } },
+    "build": { "description": "Full access mode for implementation and changes", "model": "deepseek-v4", "temperature": 0.3 },
+    "deep-thinker": { "description": "High reasoning effort, low verbosity", "model": "deepseek-v4", "temperature": 0.1, "tools": { "write": false, "edit": false } },
+    "email-responder": { "description": "Draft and respond to emails", "model": "deepseek-v4", "temperature": 0.8, "tools": { "write": true, "edit": true, "bash": false } },
+    "code-reviewer": { "description": "Code review with fresh eyes", "model": "deepseek-v4", "temperature": 0.2, "tools": { "write": false, "edit": false, "bash": false } },
+    "security-scanner": { "description": "Security analysis and vulnerability scanning", "model": "deepseek-v4", "temperature": 0.1, "tools": { "write": false, "edit": false, "bash": true, "grep": true } }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "nexus-opencode-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "opencode-acp-client.js",
+  "description": "ACP client + NPC fallback bridge for OpenCode"
+}

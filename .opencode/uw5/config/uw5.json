@@ -1,0 +1,26 @@
+{
+  "version": "5.0",
+  "kernel": {
+    "boot_sequence": ["resolver", "planner", "router", "executor"],
+    "auto_start": true
+  },
+  "policies": {
+    "load_on_demand": true,
+    "unload_after_task": true,
+    "max_retry": 3,
+    "self_healing": true,
+    "trace_capture": true
+  },
+  "memory": {
+    "kairos_enabled": true,
+    "golden_state_enabled": true,
+    "active_context_enabled": true
+  },
+  "paths": {
+    "registry": ".opencode/uw5/registry/",
+    "kernel": ".opencode/uw5/kernel/",
+    "pipeline": ".opencode/uw5/pipeline/",
+    "memory": ".opencode/uw5/memory/",
+    "config": ".opencode/uw5/config/"
+  }
+}

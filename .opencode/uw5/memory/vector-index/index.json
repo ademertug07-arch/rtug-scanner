@@ -1,0 +1,15 @@
+{
+  "version": "1.0",
+  "built_at": "2026-07-12 13:31:12",
+  "num_documents": 953,
+  "vocab_size": 6702,
+  "embedding_dim": 6702,
+  "method": "tfidf_cosine",
+  "uw5_component": "L03_KAIROS_RECALL__L04_KNOWLEDGE_GRAPH__sub_component",
+  "source_types": [
+    "uw5_core",
+    "kairos",
+    "pine_rules",
+    "skill"
+  ]
+}

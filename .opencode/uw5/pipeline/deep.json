@@ -1,0 +1,27 @@
+{
+  "name": "Deep Pipeline",
+  "routes": [4, 5],
+  "description": "Agent Subtype veya Reflection Engine ile derin analiz. Uzun pipeline, yüksek reasoning.",
+  "layers": [
+    { "id": "L00", "name": "Master Hub" },
+    { "id": "L01", "name": "Context Guard" },
+    { "id": "L02", "name": "Task Planner" },
+    { "id": "L03", "name": "KAIROS Recall + Semantic Search" },
+    { "id": "L04", "name": "Workspace Knowledge Graph" },
+    { "id": "L05", "name": "Capability Matrix" },
+    { "id": "L06", "name": "Cost Optimizer" },
+    { "id": "L07", "name": "Model Router", "override": "deep" },
+    { "id": "L08", "name": "Skill Auto-Load" },
+    { "id": "L09", "name": "Tool Registry" },
+    { "id": "L10", "name": "Plugin Manager" },
+    { "id": "L11", "name": "Prompt Compiler" },
+    { "id": "L12", "name": "Multi-Agent Orchestrator" },
+    { "id": "L13", "name": "Execution Engine" },
+    { "id": "L14", "name": "Sandbox" },
+    { "id": "L15", "name": "Verifier + Policy" },
+    { "id": "L16", "name": "Self-Healing" },
+    { "id": "L17", "name": "Learning Engine" },
+    { "id": "L18", "name": "Trace Capture" },
+    { "id": "L19", "name": "Golden State" }
+  ]
+}

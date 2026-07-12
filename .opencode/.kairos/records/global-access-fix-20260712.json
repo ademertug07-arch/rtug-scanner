@@ -1,0 +1,10 @@
+﻿{
+    "intent_embedding":  "uw5_global_accessibility",
+    "last_used":  "2026-07-12T13:58:00+03:00",
+    "timestamp":  "2026-07-12T13:58:00+03:00",
+    "success_rate":  1,
+    "attempt_count":  1,
+    "solution_diff":  "Set UW5_ROOT env var globally; removed project-level uw5 command override from opencode.jsonc; updated project instructions to include UW5 init files",
+    "domain":  "system_config",
+    "error_signature":  "global-access-fix-20260712"
+}

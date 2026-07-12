@@ -1,0 +1,48 @@
+﻿{
+  "tiers": {
+    "flash": {
+      "provider": "groq",
+      "model": "groq/llama-3.3-70b-versatile",
+      "speed": "320 tok/s",
+      "use_case": "Basit task, hızlı arama, düzeltme"
+    },
+    "balanced": {
+      "provider": "openrouter",
+      "model": "openrouter/anthropic/claude-sonnet-4.6",
+      "context": "200K token",
+      "use_case": "Normal işler, reasoning, Türkçe"
+    },
+    "deep": {
+      "provider": "openrouter",
+      "model": "openrouter/openai/gpt-4o",
+      "use_case": "Karmaşık analiz, strateji, optimizasyon"
+    },
+    "ultra": {
+      "provider": "openrouter",
+      "model": "openrouter/anthropic/claude-sonnet-4.6",
+      "use_case": "Maksimum zeka, kritik kararlar"
+    },
+    "local": {
+      "provider": "ollama",
+      "model": "ollama/qwen2.5-coder:7b",
+      "use_case": "Local, offline, gizlilik"
+    },
+    "offline": {
+      "provider": "ollama",
+      "model": "ollama/llama3.2:3b",
+      "use_case": "Tamamen offline, çok küçük model"
+    }
+  },
+  "selection_rules": {
+    "default": "balanced",
+    "tur": "balanced",
+    "fast": "flash",
+    "deep_analysis": "deep",
+    "critical": "ultra",
+    "private": "local",
+    "local_fallback": "local",
+    "offline": "offline"
+  }
+}
+
+

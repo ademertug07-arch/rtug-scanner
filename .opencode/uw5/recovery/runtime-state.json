@@ -1,0 +1,11 @@
+{
+    "registryLoaded":  true,
+    "pipelineReady":  true,
+    "errors":  {
+
+               },
+    "lastBootResult":  "success",
+    "bootTime":  "2026-07-12 12:55:58",
+    "uw5Version":  "5.0",
+    "status":  "ready"
+}

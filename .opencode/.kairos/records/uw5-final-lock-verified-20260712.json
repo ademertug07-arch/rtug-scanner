@@ -1,0 +1,17 @@
+﻿{
+    "description":  "UW5 v5 Final Lock-In: baseline frozen, change guard active, identity assertion live, dual-backup confirmed",
+    "domain":  "system",
+    "timestamp":  "2026-07-12 13:39:52",
+    "changes_made":  [
+                         "UW5_BASELINE_v5_FINAL.json created and frozen in .version-history git",
+                         "uw5-change-guard.ps1 - structural shrinkage detection (21/8/6/7)",
+                         "uw5-restore.ps1 - baseline restore mode added",
+                         "uw5-boot.ps1 - structural check + identity assertion log",
+                         "uw5-executor.ps1 - L13 snapshot trigger + L19 dual-backup",
+                         "UW5_CORE.md - Identity Assertion () + Kurtarma Sozleri ()",
+                         "LOCK_LOG.md - permanent lock documentation"
+                     ],
+    "success_rate":  1,
+    "error_signature":  "UW5_FINAL_LOCK_VERIFIED",
+    "verification":  "baseline_restore:35/35|shrinkage_detect:confirmed|identity_boot:logged"
+}

@@ -1,0 +1,12 @@
+{
+  "plugins": [
+    { "name": "pine-validate", "domain": "pine", "description": "Pine Script validation and 64-plot checking" },
+    { "name": "nexus-sync", "domain": "uw5", "description": "NEXUS agent state synchronization" },
+    { "name": "auto-audit", "domain": "security", "description": "Automatic security audit on each pipeline" }
+  ],
+  "load_rules": {
+    "pine": ["pine-validate"],
+    "uw5": ["nexus-sync"],
+    "security": ["auto-audit"]
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "domains": {
+    "pine_script": {
+      "keywords": ["pine", "tradingview", "indicator", "strategy", "pine script"],
+      "skills": ["pine-architect", "pine-script"],
+      "mcp": [],
+      "lsp": "pine",
+      "plugins": ["pine-validate"],
+      "agent": "pine-architect",
+      "model": "flash",
+      "pipeline": "deep"
+    },
+    "web_frontend": {
+      "keywords": ["web", "site", "html", "css", "landing", "frontend", "ui", "react", "vue"],
+      "skills": ["cinematic-web", "frontend-design", "gsap-motion", "web-dev", "shadcn"],
+      "mcp": ["playwright", "browserstack"],
+      "lsp": "typescript",
+      "plugins": [],
+      "agent": "web-artifact-forge",
+      "model": "balanced",
+      "pipeline": "full"
+    },
+    "backend_api": {
+      "keywords": ["api", "backend", "python", "fastapi", "flask", "django", "server", "microservice"],
+      "skills": ["python-backend", "cli-tool"],
+      "mcp": [],
+      "lsp": "python",
+      "plugins": [],
+      "agent": "ai-systems-architect",
+      "model": "balanced",
+      "pipeline": "full"
+    },
+    "ai_llm": {
+      "keywords": ["ai", "llm", "gpt", "claude", "model", "prompt", "agent", "neural", "deep learning"],
+      "skills": ["meta-mind", "omega-v12", "deepseek-v4", "synapse", "ust-akil"],
+      "mcp": ["sequential-thinking"],
+      "lsp": "python",
+      "plugins": [],
+      "agent": "deep-thinker",
+      "model": "deep",
+      "pipeline": "full"
+    },
+    "trading_bot": {
+      "keywords": ["trading", "bot", "binance", "bybit", "backtest", "signal", "market"],
+      "skills": ["trading-bot", "data-analysis", "tradingview-sinyal-analiz-backtest"],
+      "mcp": [],
+      "lsp": "python",
+      "plugins": [],
+      "agent": "ai-systems-architect",
+      "model": "balanced",
+      "pipeline": "full"
+    },
+    "ios_swift": {
+      "keywords": ["ios", "swift", "apple", "iphone", "xcode", "swiftui", "uikit"],
+      "skills": ["ios-swift-architect"],
+      "mcp": [],
+      "lsp": "swift",
+      "plugins": [],
+      "agent": "ios-swift-architect",
+      "model": "balanced",
+      "pipeline": "full"
+    },
+    "visual_generation": {
+      "keywords": ["gorsel", "video", "image", "comfyui", "flux", "sdxl", "render", "animation"],
+      "skills": ["visual-pipeline-ops", "image-pipeline", "worldbuilder-visual"],
+      "mcp": [],
+      "lsp": "python",
+      "plugins": [],
+      "agent": "visual-pipeline-ops",
+      "model": "balanced",
+      "pipeline": "full"
+    },
+    "research": {
+      "keywords": ["research", "araştırma", "youtube", "video", "analiz", "notebooklm", "knowledge"],
+      "skills": ["yt-pipeline", "yt-search", "notebooklm"],
+      "mcp": ["brave-search", "wikipedia", "context7"],
+      "lsp": [],
+      "plugins": [],
+      "agent": "universal-orchestrator",
+      "model": "flash",
+      "pipeline": "fast"
+    },
+    "security_audit": {
+      "keywords": ["security", "guvenlik", "scan", "tarama", "audit", "vulnerability", "zafiyet"],
+      "skills": [],
+      "mcp": [],
+      "lsp": [],
+      "plugins": ["auto-audit"],
+      "agent": "security-scanner",
+      "model": "deep",
+      "pipeline": "deep"
+    },
+    "code_review": {
+      "keywords": ["review", "incele", "check", "kalite", "code review", "pr review"],
+      "skills": [],
+      "mcp": [],
+      "lsp": [],
+      "plugins": [],
+      "agent": "code-reviewer",
+      "model": "ultra",
+      "pipeline": "deep"
+    },
+    "devops_cloud": {
+      "keywords": ["azure", "cloud", "deploy", "kubernetes", "aks", "docker", "infra", "devops"],
+      "skills": ["azure-prepare", "azure-deploy", "azure-kubernetes"],
+      "mcp": ["docker", "kubernetes"],
+      "lsp": [],
+      "plugins": [],
+      "agent": "universal-orchestrator",
+      "model": "balanced",
+      "pipeline": "full"
+    },
+    "laravel_php": {
+      "keywords": ["laravel", "php", "livewire", "blade", "eloquent", "pest", "fortify", "socialite"],
+      "skills": ["laravel-best-practices", "livewire-development", "fortify-development", "pest-testing"],
+      "mcp": [],
+      "lsp": "php",
+      "plugins": [],
+      "agent": "universal-orchestrator",
+      "model": "balanced",
+      "pipeline": "full"
+    },
+    "n8n_workflow": {
+      "keywords": ["n8n", "workflow", "otomasyon", "automation"],
+      "skills": ["workflow-builder", "n8n-cli", "data-table-manager"],
+      "mcp": ["n8n"],
+      "lsp": [],
+      "plugins": [],
+      "agent": "universal-orchestrator",
+      "model": "balanced",
+      "pipeline": "full"
+    },
+    "gamedev": {
+      "keywords": ["game", "oyun", "unreal", "ue5", "gamedev", "aaa"],
+      "skills": ["aaa-studio"],
+      "mcp": [],
+      "lsp": [],
+      "plugins": [],
+      "agent": "universal-orchestrator",
+      "model": "ultra",
+      "pipeline": "full"
+    },
+    "general": {
+      "keywords": [],
+      "skills": [],
+      "mcp": [],
+      "lsp": [],
+      "plugins": [],
+      "agent": "universal-orchestrator",
+      "model": "local",
+      "pipeline": "full"
+    }
+  }
+}

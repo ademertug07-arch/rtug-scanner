@@ -1,0 +1,73 @@
+{
+  "overlay": {
+    "version": "1.0",
+    "enabled": true,
+    "mode": "bind", 
+    "description": "OpenCode üzerinde bindirme katmanı. Electron veya node_modules değişmez.",
+    "update_protection": "Sadece .opencode/uw5/ altında saklanır. OpenCode güncellemelerinde korunur."
+  },
+
+  "boot_screen": {
+    "enabled": true,
+    "duration_ms": 1500,
+    "lines": [
+      {"text": "╔══════════════════════════════════════════════════════════════╗", "delay_ms": 0},
+      {"text": "║            ⬡ UW5 SINGULARITY ENGINE v5.0 ⬡              ║", "delay_ms": 100},
+      {"text": "║     AI Civilization • Executive Council • Artifact Mgr   ║", "delay_ms": 200},
+      {"text": "╠══════════════════════════════════════════════════════════════╣", "delay_ms": 300},
+      {"text": "║  KERNEL    ⬡ BOOT SEQUENCE INITIATED                      ║", "delay_ms": 400},
+      {"text": "║  VISUAL    ⬡ CYBER CORE LOADED                            ║", "delay_ms": 600},
+      {"text": "║  HUD       ⬡ MONITOR ACTIVE                               ║", "delay_ms": 800},
+      {"text": "║  PIPELINE  ⬡ 21 LAYER ENGINE STANDBY                     ║", "delay_ms": 1000},
+      {"text": "║  MEMORY    ⬡ KAIROS ACTIVE                                ║", "delay_ms": 1200},
+      {"text": "╚══════════════════════════════════════════════════════════════╝", "delay_ms": 1400}
+    ]
+  },
+
+  "pipeline_display": {
+    "enabled": true,
+    "style": "compact",
+    "show_labels": true,
+    "show_status_dots": true,
+    "show_arrows": true,
+    "connector": " → ",
+    "active_highlight": "▸",
+    "done_marker": "●",
+    "pending_marker": "○",
+    "failed_marker": "✕"
+  },
+
+  "status_bar": {
+    "enabled": true,
+    "position": "bottom",
+    "segments": [
+      {"id": "route", "width": 12, "label": "ROUTE", "align": "left"},
+      {"id": "layer", "width": 8, "label": "LAYER", "align": "left"},
+      {"id": "agent", "width": 20, "label": "AGENT", "align": "center"},
+      {"id": "model", "width": 16, "label": "MODEL", "align": "center"},
+      {"id": "memory", "width": 10, "label": "MEM", "align": "right"},
+      {"id": "time", "width": 10, "label": "TIME", "align": "right"}
+    ]
+  },
+
+  "notifications": {
+    "enabled": true,
+    "position": "bottom-right",
+    "max_visible": 3,
+    "fade_delay_ms": 5000,
+    "types": {
+      "info": {"icon": "ℹ", "color": "semantic.info"},
+      "success": {"icon": "✓", "color": "semantic.success"},
+      "warning": {"icon": "⚠", "color": "semantic.warning"},
+      "error": {"icon": "✕", "color": "semantic.error"}
+    }
+  },
+
+  "decorations": {
+    "corner_logo": true,
+    "separators": true,
+    "border_glow": true,
+    "section_headers": true,
+    "indent_guides": true
+  }
+}

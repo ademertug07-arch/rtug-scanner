@@ -1,0 +1,182 @@
+﻿{
+    "manifest_version":  "1.0",
+    "updated_at":  "2026-07-12 13:42:00",
+    "file_count":  35,
+    "files":  {
+                  "plugins_json":  {
+                                       "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\registry\\plugins.json",
+                                       "checked_at":  "2026-07-12T13:42:00.2150232+03:00",
+                                       "hash":  "9fca93d541677831ce304b6df42e05dd131baf40d4390369e12c55eae1b8888b"
+                                   },
+                  "uw5_memory":  {
+                                     "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\runtime\\uw5-memory.ps1",
+                                     "checked_at":  "2026-07-12T13:42:00.2022922+03:00",
+                                     "hash":  "306bdd66834b416b20d32b14b50300dee6ccd2b8c7656324f5f713719b3d5e56"
+                                 },
+                  "UW5_CORE.md":  {
+                                      "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\UW5_CORE.md",
+                                      "checked_at":  "2026-07-12T13:42:00.1776742+03:00",
+                                      "hash":  "5aed55d5ff22b22694382ad36b06bee7ec7b6b5c016c916382dc397776124e16"
+                                  },
+                  "full_json":  {
+                                    "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\pipeline\\full.json",
+                                    "checked_at":  "2026-07-12T13:42:00.2220428+03:00",
+                                    "hash":  "86dbae89e503097cb8a09c5776eec3cbc516c860f0e5d47c7a1012b947f645a2"
+                                },
+                  "uw5_retrieval_indexer_py":  {
+                                                   "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\runtime\\uw5-retrieval-indexer.py",
+                                                   "checked_at":  "2026-07-12T13:42:00.1962909+03:00",
+                                                   "hash":  "76620e5ab848aeb06ef0f6ed05664f497b338cbef2e02cb975137b982c86699d"
+                                               },
+                  "uw5_pre_change_snapshot":  {
+                                                  "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\runtime\\uw5-pre-change-snapshot.ps1",
+                                                  "checked_at":  "2026-07-12T13:42:00.2064470+03:00",
+                                                  "hash":  "8abe8a38c27f24b3a980e2d2cacd579ec79ecbcb9bf2f8c2e6949590de0a82b6"
+                                              },
+                  "opencode_jsonc":  {
+                                         "path":  "C:\\Users\\cagda/.config/opencode/config/opencode.jsonc",
+                                         "checked_at":  "2026-07-12T13:42:00.1847800+03:00",
+                                         "hash":  "842a80f196878030952a1a57d353d703bba623ff29326252be2967a747627de0"
+                                     },
+                  "capabilities_json":  {
+                                            "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\registry\\capabilities.json",
+                                            "checked_at":  "2026-07-12T13:42:00.2191365+03:00",
+                                            "hash":  "1fc572d163372c7d7635a777e03854f5a27a46e7bea9ae5b5ef0a804695cf600"
+                                        },
+                  "uw5_boot":  {
+                                   "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\runtime\\uw5-boot.ps1",
+                                   "checked_at":  "2026-07-12T13:42:00.1887799+03:00",
+                                   "hash":  "e9b9a4577a4c09f31332fdbd4e3cab0e489d9a748677a1f7165996f5c1391bf5"
+                               },
+                  "global_AGENTS_md":  {
+                                           "path":  "C:\\Users\\cagda/.config/opencode/AGENTS.md",
+                                           "checked_at":  "2026-07-12T13:42:00.1867812+03:00",
+                                           "hash":  "275b03d6c956fe6521f8b0e50fbf99fc39f03a1d5cb851c28859c23e5f6f9e7e"
+                                       },
+                  "rollback_manager_ps1":  {
+                                               "path":  "C:\\Users\\cagda/.config/opencode/scripts/rollback-manager.ps1",
+                                               "checked_at":  "2026-07-12T13:42:00.2436425+03:00",
+                                               "hash":  "0699384400104363dff9315b57bc3f4c1347f5c8fe6dddef18d3cf0d256cf65c"
+                                           },
+                  "uw5_json":  {
+                                   "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\config\\uw5.json",
+                                   "checked_at":  "2026-07-12T13:42:00.2376423+03:00",
+                                   "hash":  "dc6b32ed3f00b38d6eb8d98cd1dd0ae747df5a77270de183c06bd756272e2a82"
+                               },
+                  "deep_json":  {
+                                    "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\pipeline\\deep.json",
+                                    "checked_at":  "2026-07-12T13:42:00.2235651+03:00",
+                                    "hash":  "83f1b84ed16bddcc7dff4232cf599eb48e6b0680aa618616c8ffb3929ef5fc0d"
+                                },
+                  "vector_index_dir":  {
+                                           "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\memory\\vector-index\\",
+                                           "checked_at":  "2026-07-12T13:42:00.2346393+03:00",
+                                           "hash":  "dir:4:26618834"
+                                       },
+                  "skills_json":  {
+                                      "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\registry\\skills.json",
+                                      "checked_at":  "2026-07-12T13:42:00.2094494+03:00",
+                                      "hash":  "2c08df58f66cc056f184882a23ae66e6f23f95e685ccbfa00c5afe4bbfebcf91"
+                                  },
+                  "UW5_BASELINE":  {
+                                       "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\UW5_BASELINE_v5_FINAL.json",
+                                       "checked_at":  "2026-07-12T13:42:00.1826744+03:00",
+                                       "hash":  "f64684f0c1642cb8cb8c711b4feed409c8fa3af812a896b4b34c25fdc6818448"
+                                   },
+                  "kairos_json":  {
+                                      "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\memory\\kairos.json",
+                                      "checked_at":  "2026-07-12T13:42:00.2245949+03:00",
+                                      "hash":  "f50297a47cff89aa8f7458475929ab87bd539338a10e3517a797e229ad88529e"
+                                  },
+                  "uw5_retrieval_ps1":  {
+                                            "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\runtime\\uw5-retrieval.ps1",
+                                            "checked_at":  "2026-07-12T13:42:00.1932850+03:00",
+                                            "hash":  "ce18e9bd6a047a2e3889670a8f141ae6e87eca7a41442189bdcdf06ccc1ffec6"
+                                        },
+                  "uw5_visual":  {
+                                     "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\runtime\\uw5-visual.ps1",
+                                     "checked_at":  "2026-07-12T13:42:00.1972913+03:00",
+                                     "hash":  "bf002f4b6886cfce78f64cf349c1dbecd0260240bd7019afb4774520f8efd829"
+                                 },
+                  "uw5_root_resolver":  {
+                                            "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\runtime\\uw5-root-resolver.ps1",
+                                            "checked_at":  "2026-07-12T13:42:00.1992924+03:00",
+                                            "hash":  "b7dca2057ad8f3fbab735dbf42e861fe662422b00752d2a3c061aa9c76f84653"
+                                        },
+                  "uw5_state_integrity":  {
+                                              "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\runtime\\uw5-state-integrity.ps1",
+                                              "checked_at":  "2026-07-12T13:42:00.2044438+03:00",
+                                              "hash":  "906732c050e4325670f9ff9c033b569929e4c1c0b061811df7606ed5e26395af"
+                                          },
+                  "mcp_json":  {
+                                   "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\registry\\mcp.json",
+                                   "checked_at":  "2026-07-12T13:42:00.2114500+03:00",
+                                   "hash":  "923fce2b10d6c02f0082ea627594b1916dcc878e04b6ddd65fbec1b856a5666e"
+                               },
+                  "STATE_MANIFEST":  {
+                                         "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\STATE_MANIFEST.json",
+                                         "checked_at":  "2026-07-12T13:42:00.2386419+03:00",
+                                         "hash":  "7584d872053921406ca06b072d7675c5caf4cce6e6f4c4864b6add6ea46cb7b3"
+                                     },
+                  "golden_json":  {
+                                      "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\memory\\golden.json",
+                                      "checked_at":  "2026-07-12T13:42:00.2255952+03:00",
+                                      "hash":  "77599030267165095fe79d4432a8dbff79ea26b68720f968e854f58faf108459"
+                                  },
+                  "agents_json":  {
+                                      "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\registry\\agents.json",
+                                      "checked_at":  "2026-07-12T13:42:00.2170294+03:00",
+                                      "hash":  "fb05630a6abeae4cbea213fb140bec430c8dd7889116eec1ba565bb0a3f36c21"
+                                  },
+                  "uw5_resolver":  {
+                                       "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\runtime\\uw5-resolver.ps1",
+                                       "checked_at":  "2026-07-12T13:42:00.1907836+03:00",
+                                       "hash":  "798a10d807aa079afccedecfdc70d5c93ddaddb2d4bf18b4f50d3eac535c39fa"
+                                   },
+                  "uw5_retrieval_py":  {
+                                           "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\runtime\\uw5-retrieval.py",
+                                           "checked_at":  "2026-07-12T13:42:00.1953111+03:00",
+                                           "hash":  "8917c6ca30a01f42debd1bc460613ca2df7fe32a8192932a34ae73fca6ea757d"
+                                       },
+                  "uw5_restore":  {
+                                      "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\runtime\\uw5-restore.ps1",
+                                      "checked_at":  "2026-07-12T13:42:00.2084497+03:00",
+                                      "hash":  "b6c41aebf0df6aece74bf07cfb1f38cc0336969587f76a7921fa823aa0975c61"
+                                  },
+                  "golden_state_ps1":  {
+                                           "path":  "C:\\Users\\cagda/.config/opencode/scripts/golden-state.ps1",
+                                           "checked_at":  "2026-07-12T13:42:00.2416409+03:00",
+                                           "hash":  "4c257634ff5b29a804bbba84648ddeb641fc1b0b5cf1693d6cff26f41334a3bf"
+                                       },
+                  "uw5_bootstrap":  {
+                                        "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\runtime\\uw5-bootstrap.ps1",
+                                        "checked_at":  "2026-07-12T13:42:00.2002920+03:00",
+                                        "hash":  "3c8f2fe6852f30ea1e432210b7179bac38559df8220180f4e1abb4d3f70ffb68"
+                                    },
+                  "visual_state_json":  {
+                                            "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\memory\\visual-state.json",
+                                            "checked_at":  "2026-07-12T13:42:00.2356393+03:00",
+                                            "hash":  "9d1d3fd58023c73b19555aba70d272597fcc9a0cbcfcbc8d040e99a4d9c365da"
+                                        },
+                  "models_json":  {
+                                      "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\registry\\models.json",
+                                      "checked_at":  "2026-07-12T13:42:00.2180297+03:00",
+                                      "hash":  "35857229da24998b29eb53c27d8e79d471b7d2078cfbd1aedc0d039eb65b99e7"
+                                  },
+                  "init_session_ps1":  {
+                                           "path":  "C:\\Users\\cagda/.config/opencode/scripts/init-session.ps1",
+                                           "checked_at":  "2026-07-12T13:42:00.2396417+03:00",
+                                           "hash":  "155d808cba53f7eba9103014f5b7d4fc0347f2db5261f9bbd5a07f6a5911d3cd"
+                                       },
+                  "fast_json":  {
+                                    "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\pipeline\\fast.json",
+                                    "checked_at":  "2026-07-12T13:42:00.2210269+03:00",
+                                    "hash":  "2357b0267505b3fd2b0876a1e434b72444f623be6098fa432e1c04f1a9a562ff"
+                                },
+                  "lsp_json":  {
+                                   "path":  "C:\\Users\\cagda\\OneDrive\\Masaüstü\\open code mode\\.opencode\\uw5\\registry\\lsp.json",
+                                   "checked_at":  "2026-07-12T13:42:00.2140370+03:00",
+                                   "hash":  "41fdeb9ddd3497460935fbd5590ac5390ed9f9249a8a33a469d5be684ff3bcc7"
+                               }
+              }
+}
