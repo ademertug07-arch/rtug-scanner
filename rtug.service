@@ -1,0 +1,23 @@
+[Unit]
+Description=RTUG High-Confidence Pattern Scanner & Telegram Bot
+After=network.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=rtug
+Group=rtug
+WorkingDirectory=/opt/rtug
+ExecStart=/usr/bin/python3 /opt/rtug/rtug_server.py
+Restart=always
+RestartSec=10
+StandardOutput=append:/opt/rtug/logs/rtug_server.log
+StandardError=append:/opt/rtug/logs/rtug_server.log
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target

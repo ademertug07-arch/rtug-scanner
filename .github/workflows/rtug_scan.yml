@@ -1,0 +1,38 @@
+name: RTUG Scanner
+
+on:
+  schedule:
+    - cron: '0 */2 * * *'
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: |
+          pip install numpy pandas yfinance requests python-dotenv ccxt flask
+
+      - name: Create .env
+        run: |
+          echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" >> .env
+          echo "TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }}" >> .env
+
+      - name: Run scanner
+        run: python rtug_server.py --once --no-webhook
+
+      - name: Commit state updates
+        run: |
+          git config user.name "RTUG Scanner"
+          git config user.email "rtug-bot@actions"
+          git add .pattern_monitor_status.json .rtug-alerts/ .rtug-memory/ .rtug-backtest/ -A 2>/dev/null || true
+          git diff --cached --quiet && echo "No changes" || (git commit -m "chore: auto-update scanner state [skip ci]" && git push)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
